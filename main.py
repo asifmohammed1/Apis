@@ -144,13 +144,16 @@ def dummy():
 
 @app.post("/chatgpt")
 def chat_gpt(input_text:GptInput):
-    pload = json.dumps({
-  "prompt": input_text.BOT,
-  "conversation": 1
-})
-    headers = {
-  'Content-Type': 'application/json',
-}
-    r = requests.post('https://www.catgpt.dog/complete', data=pload, headers=headers)
-    res = {"Response":json.loads(r.text)['completion']}
+    try:
+        pload = json.dumps({
+    "prompt": input_text.BOT,
+    "conversation": 1
+    })
+        headers = {
+    'Content-Type': 'application/json',
+    }
+        r = requests.post('https://www.catgpt.dog/complete', data=pload, headers=headers)
+        res = {"Response":json.loads(r.text)['completion']}
+    except:
+        res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
     return res  
