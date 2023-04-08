@@ -24,12 +24,19 @@ port=url.port
 )
 cursor = conn.cursor()
 
+
 app = FastAPI()
 
 class CreateData(BaseModel):
     name:str
     number:int
     description:str
+
+class CreateLogs(BaseModel):
+    title:str
+    title2:str
+    create_date:str
+    mc:str
 
 class Queryenter(BaseModel):
     querystatement:str
@@ -140,6 +147,27 @@ def dummy():
 #     driver.implicitly_wait(10)
 #     res = driver.find_element(By.XPATH, '//*[@class="chatgpt-result"]').text
 #     return {"data":res}
+
+
+@app.post("/create_logs")
+def create_logs(test_table: CreateLogs):
+    try:
+        title = test_table.title
+        date = test_table.create_date
+        title2 = test_table.title2
+        mc = test_table.mc
+        cursor.execute(f"INSERT INTO logs (title,title2, create_date,mc) VALUES ('{title}','{title2}', '{date}', '{mc}')")
+        conn.commit()
+        res = {
+            "message": "data created successfully",
+            "status":201,
+            "data":dict(test_table)
+                }
+    except:
+        res = {
+            "message": "something when wrong"
+        }
+    return res
 
 
 @app.post("/chatgpt")
