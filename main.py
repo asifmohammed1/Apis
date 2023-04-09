@@ -11,6 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import requests
 import json
+from fastapi.middleware.cors import CORSMiddleware
 # from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -26,6 +27,15 @@ cursor = conn.cursor()
 
 
 app = FastAPI()
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class CreateData(BaseModel):
     name:str
