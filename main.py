@@ -24,7 +24,7 @@ def db_connect():
     port=url.port
     )
     cursor = conn.cursor()
-    return cursor
+    return cursor, conn
 
 
 app = FastAPI()
@@ -58,7 +58,7 @@ class GptInput(BaseModel):
 
 @app.get("/read")
 def read_data():
-    cursor = db_connect()
+    cursor, conn = db_connect()
     cursor.execute('select * from apisec')
     data = cursor.fetchall()
     res = []
@@ -69,7 +69,7 @@ def read_data():
 
 @app.post("/create")
 def create_data(test_table: CreateData):
-    cursor = db_connect()
+    cursor, conn = db_connect()
     try:
         name = test_table.name
         description = test_table.description
@@ -88,7 +88,7 @@ def create_data(test_table: CreateData):
 
 @app.post("/getbyid")
 def getbyid_data(req:int):
-    cursor = db_connect()
+    cursor, conn = db_connect()
     cursor.execute(f'select * from apisec where id={req}')
     data = cursor.fetchall()
     res = []
@@ -99,7 +99,7 @@ def getbyid_data(req:int):
 
 @app.get("/querybyparams")
 def querybyparams_data(params:str = Query(None)):
-    cursor = db_connect()
+    cursor, conn = db_connect()
     try:
         cursor.execute(params)
         conn.commit()
@@ -119,7 +119,7 @@ def querybyparams_data(params:str = Query(None)):
 
 @app.post("/querybyres")
 def querybyres_data(q:Queryenter):
-    cursor = db_connect()
+    cursor, conn = db_connect()
     try:
         cursor.execute(q.querystatement)
         conn.commit()
@@ -167,23 +167,23 @@ def dummy():
 
 @app.post("/create_logs")
 def create_logs(test_table: CreateLogs):
-    cursor = db_connect()
-    try:
-        title = test_table.title
-        date = test_table.create_date
-        title2 = test_table.title2
-        mc = test_table.mc
-        cursor.execute(f"INSERT INTO logs (title,title2, create_date,mc) VALUES ('{title}','{title2}', '{date}', '{mc}')")
-        conn.commit()
-        res = {
-            "message": "data created successfully",
-            "status":201,
-            "data":dict(test_table)
-                }
-    except:
-        res = {
-            "message": "something when wrong"
-        }
+    cursor, conn = db_connect()
+    # try:
+    title = test_table.title
+    date = test_table.create_date
+    title2 = test_table.title2
+    mc = test_table.mc
+    cursor.execute(f"INSERT INTO logs (title,title2, create_date,mc) VALUES ('{title}','{title2}', '{date}', '{mc}')")
+    conn.commit()
+    res = {
+        "message": "data created successfully",
+        "status":201,
+        "data":dict(test_table)
+            }
+    # except:
+    #     res = {
+    #         "message": "something when wrong"
+    #     }
     return res
 
 
