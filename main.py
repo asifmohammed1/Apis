@@ -14,16 +14,17 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 # from webdriver_manager.chrome import ChromeDriverManager
 
-
-up.uses_netloc.append("postgres")
-url = up.urlparse("postgres://sonuasif748:jBYaXx0NqOh8@ep-white-rain-379558.ap-southeast-1.aws.neon.tech/neondb")
-conn = psycopg2.connect(database=url.path[1:],
-user=url.username,
-password=url.password,
-host=url.hostname,
-port=url.port
-)
-cursor = conn.cursor()
+def db_connect():
+    up.uses_netloc.append("postgres")
+    url = up.urlparse("postgres://sonuasif748:jBYaXx0NqOh8@ep-white-rain-379558.ap-southeast-1.aws.neon.tech/neondb")
+    conn = psycopg2.connect(database=url.path[1:],
+    user=url.username,
+    password=url.password,
+    host=url.hostname,
+    port=url.port
+    )
+    cursor = conn.cursor()
+    return cursor
 
 
 app = FastAPI()
@@ -57,6 +58,7 @@ class GptInput(BaseModel):
 
 @app.get("/read")
 def read_data():
+    cursor = db_connect()
     cursor.execute('select * from apisec')
     data = cursor.fetchall()
     res = []
@@ -67,6 +69,7 @@ def read_data():
 
 @app.post("/create")
 def create_data(test_table: CreateData):
+    cursor = db_connect()
     try:
         name = test_table.name
         description = test_table.description
@@ -85,6 +88,7 @@ def create_data(test_table: CreateData):
 
 @app.post("/getbyid")
 def getbyid_data(req:int):
+    cursor = db_connect()
     cursor.execute(f'select * from apisec where id={req}')
     data = cursor.fetchall()
     res = []
@@ -95,6 +99,7 @@ def getbyid_data(req:int):
 
 @app.get("/querybyparams")
 def querybyparams_data(params:str = Query(None)):
+    cursor = db_connect()
     try:
         cursor.execute(params)
         conn.commit()
@@ -114,6 +119,7 @@ def querybyparams_data(params:str = Query(None)):
 
 @app.post("/querybyres")
 def querybyres_data(q:Queryenter):
+    cursor = db_connect()
     try:
         cursor.execute(q.querystatement)
         conn.commit()
@@ -161,6 +167,7 @@ def dummy():
 
 @app.post("/create_logs")
 def create_logs(test_table: CreateLogs):
+    cursor = db_connect()
     try:
         title = test_table.title
         date = test_table.create_date
