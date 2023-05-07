@@ -12,6 +12,8 @@ from selenium.webdriver.chrome.options import Options
 import requests
 import json
 from fastapi.middleware.cors import CORSMiddleware
+from textblob import TextBlob
+# from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 
 def db_connect():
@@ -48,6 +50,7 @@ class CreateLogs(BaseModel):
     title2:str
     create_date:str
     mc:str
+    res:str
 
 class Queryenter(BaseModel):
     querystatement:str
@@ -136,12 +139,12 @@ def querybyres_data(q:Queryenter):
     return {"message": "query what you have enter is applied", "data": data}
 
 @app.get("/")
-def dummy():
-    return {"message":"testing"}
+def welcome():
+    return {"message":"Welcome"}
 
 
-# @app.post("/chatgpt")
-# def chat_gpt(input_text:GptInput):
+# @app.post("/chatgpt4")
+# def chat_gpt4(input_text:GptInput):
 #     params = {'q': input_text.BOT}
 #     query_string = urllib.parse.urlencode(params)
 #     BaseURL = f"https://googpt.ai/?{query_string}&hl=en"
@@ -152,6 +155,7 @@ def dummy():
 #     # res = element.text
 #     # obj1 = ChromeDriverManager()
 #     # path = obj1.install()
+#     s = HTTPSession()
 #     options = Options()
 #     options.add_argument('--headless')
 #     options.add_argument('--no-sandbox')
@@ -173,7 +177,8 @@ def create_logs(test_table: CreateLogs):
     date = test_table.create_date
     title2 = test_table.title2
     mc = test_table.mc
-    cursor.execute(f"INSERT INTO logs (title,title2, create_date,mc) VALUES ('{title}','{title2}', '{date}', '{mc}')")
+    res = test_table.res
+    cursor.execute(f"INSERT INTO logs (title,title2, create_date,mc, res) VALUES ('{title}','{title2}', '{date}', '{mc}', '{res}')")
     conn.commit()
     res = {
         "message": "data created successfully",
@@ -202,3 +207,27 @@ def chat_gpt(input_text:GptInput):
     except:
         res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
     return res  
+
+
+@app.post("/chatgptv2")
+def chat_gptv2(input_text:GptInput):
+    try:
+        replace = {"Meow!":"Hey!","Meow":"Hey","meon":"hey","pur":"thank you","purr":"thank you","growl":"howl","pur-fect":"perfect",
+                "meow-meow":"hey","Me-ow!":"Hey!","Me-ow":"Hey","prrr":"","prrrr":"","me-ow":"hey", "Purr...":"","Purr.":"",
+                "pur":"","Purrr.":"","Purr.":"","Prrrr...":""}
+        pload = json.dumps({
+    "prompt": input_text.BOT,
+    "conversation": 1
+    })
+        headers = {
+    'Content-Type': 'application/json',
+    }
+        r = requests.post('https://www.catgpt.dog/complete', data=pload, headers=headers)
+        txt = json.loads(r.text)['completion']
+        for k,v in replace.items():
+            txt = txt.replace(k,v)
+        res = {"Response":txt}
+    except:
+        res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
+    return res  
+
