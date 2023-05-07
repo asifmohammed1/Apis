@@ -213,7 +213,7 @@ def chat_gptv2(input_text:GptInput):
     try:
         replace = {"Meow!":"Hey!","Meow":"Hey","meon":"hey","pur":"thank you","purr":"thank you","growl":"howl","pur-fect":"perfect",
                 "meow-meow":"hey","Me-ow!":"Hey!","Me-ow":"Hey","prrr":"","prrrr":"","me-ow":"hey", "Purr...":"","Purr.":"",
-                "pur":"","Purrr.":"","Purr.":"","Prrrr...":""}
+                "pur":"","Purrr.":"","Purr.":"","Prrrr...":"", "Meow,":"Hey,","Purr.":""}
         pload = json.dumps({
     "prompt": input_text.BOT,
     "conversation": 1
