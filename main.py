@@ -12,7 +12,7 @@ from selenium.webdriver.chrome.options import Options
 import requests
 import json
 from fastapi.middleware.cors import CORSMiddleware
-from textblob import TextBlob
+# from textblob import TextBlob
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 
