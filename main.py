@@ -173,11 +173,12 @@ def create_logs(test_table: CreateLogs):
     cursor, conn = db_connect()
     # try:
     mcc = ''.join(letter for letter in test_table.mc if letter.isalnum())
+    ress = ''.join(letter for letter in test_table.res if letter.isalnum())
     title = test_table.title
     date = test_table.create_date
     title2 = test_table.title2
     mc = mcc
-    res = test_table.res
+    res = ress
     cursor.execute(f"INSERT INTO logs (title,title2, create_date,mc, res) VALUES ('{title}','{title2}', '{date}', '{mc}', '{res}')")
     conn.commit()
     res = {
