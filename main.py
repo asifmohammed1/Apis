@@ -35,7 +35,9 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "https://chat-gpt-v1.web.app/"
-    "http://chat-gpt-v1.web.app/"
+    "http://chat-gpt-v1.web.app/",
+    "https://apis-x069.onrender.com",
+    "http://apis-x069.onrender.com"
 ]
 app.add_middleware(
     CORSMiddleware,
