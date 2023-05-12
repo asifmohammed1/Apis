@@ -29,7 +29,14 @@ def db_connect():
 
 
 app = FastAPI()
-origins = ["*"]
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "https://chat-gpt-v1.web.app/"
+    "http://chat-gpt-v1.web.app/"
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
