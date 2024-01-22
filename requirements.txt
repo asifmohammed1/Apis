@@ -27,3 +27,4 @@ urllib3==1.26.15
 uvicorn==0.21.1
 wsproto==1.2.0
 passlib
+python-jose==3.3.0
