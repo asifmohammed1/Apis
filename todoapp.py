@@ -14,7 +14,7 @@ from fastapi import FastAPI, HTTPException, Depends, status
 # DATABASE_URL = "postgres://sonuasif748:jBYaXx0NqOh8@ep-white-rain-379558.ap-southeast-1.aws.neon.tech/neondb"
 
 # # FastAPI app instance
-# app = FastAPI()
+app = FastAPI()
 
 # # CORS Middleware to allow cross-origin requests
 # app.add_middleware(
