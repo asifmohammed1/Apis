@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+# from fastapi import FastAPI, HTTPException
 import os
 import urllib.parse as up
 import psycopg2
@@ -13,7 +13,7 @@ import requests
 import json
 from fastapi.middleware.cors import CORSMiddleware
 # from todo import *
-# from todoapp import *
+from todoapp import *
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 
@@ -30,7 +30,7 @@ def db_connect():
     return cursor, conn
 
 
-app = FastAPI()
+# app = FastAPI()
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -233,9 +233,3 @@ def chat_gptv2(input_text:GptInput):
     except:
         res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
     return res  
-
-
-
-@app.get("/test")
-def register_user():
-    return {"message": "testing"}
