@@ -13,7 +13,7 @@ import requests
 import json
 from fastapi.middleware.cors import CORSMiddleware
 # from todo import *
-from todoapp import *
+# from todoapp import *
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 
@@ -234,3 +234,8 @@ def chat_gptv2(input_text:GptInput):
         res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
     return res  
 
+
+
+@app.get("/test")
+def register_user():
+    return {"message": "testing"}
