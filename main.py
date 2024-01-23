@@ -30,6 +30,7 @@ def db_connect():
     return cursor, conn
 
 
+
 # app = FastAPI()
 origins = ["*"]
 app.add_middleware(
