@@ -234,3 +234,8 @@ def chat_gptv2(input_text:GptInput):
     except:
         res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
     return res  
+
+
+@app.get("/zzzz")
+def zzzz():
+    return "done"
