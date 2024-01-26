@@ -29,3 +29,4 @@ wsproto==1.2.0
 passlib
 python-jose==3.3.0
 python-multipart
+sqlalchemy
