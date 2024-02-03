@@ -25,7 +25,7 @@ class UserBase(BaseModel):
 
 class TodoBase(BaseModel):
     task: str
-    id: int
+    # id: int
     user_id: int
 
 def get_db():
@@ -60,6 +60,18 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
         return user
     return None
 
+def verify_token(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload.get("sub")
+    except JWTError:
+        raise credentials_exception
+
 
 # Auth API's
 @loginapis.get("/Listofusers")
@@ -73,14 +85,15 @@ async def UserDetails(user_id: int, db: Session = Depends(get_db)):
     return result
 
 @loginapis.post("/token")
-async def login_for_access_token(form_data: OAuth2PasswordBearer = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(status_code=401, detail="Incorrect username or password")
+async def login_for_access_token(username: str, password: str, db: Session = Depends(get_db)):
+    user = db.query(models.Userss).filter(models.Userss.username == username).first()
+    if not user or not pwd_context.verify(password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 @loginapis.post("/Register")
 async def register_user(req: UserBase, db: Session = Depends(get_db)):
@@ -93,16 +106,36 @@ async def register_user(req: UserBase, db: Session = Depends(get_db)):
 
 
 # TODO API's
-@todoapis.get("/list")
-async def TodoDetails(todo_id: int, db: Session = Depends(get_db)):
-    result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
-    return result
-
+# @todoapis.get("/list")
+# async def TodoDetails(todo_id: int, db: Session = Depends(get_db)):
+#     result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+#     return result
+#
 @todoapis.post("/create")
 async def create_todo(req: TodoBase, db: Session = Depends(get_db)):
-    user = db.query(models.Users).filter(models.Users.user_id == 4).first()
-    db_todo = models.Todo(task=req.task,user_id=user,id=req.id)
+    user = db.query(models.Userss).filter(models.Userss.user_id == 6).first()
+    db_todo = models.Todo(task=req.task, user_id=77)
     db.add(db_todo)
     db.commit()
     db.refresh(db_todo)
     return db_todo
+
+@todoapis.get("/list")
+async def todo_details(todo_id: int, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+    result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+    if result:
+        return result
+    else:
+        raise HTTPException(status_code=404, detail="Todo not found")
+
+# @todoapis.post("/create")
+# async def create_todo(req: TodoBase, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+#     user = db.query(models.Userss).filter(models.Userss.username == token).first()
+#     if not user:
+#         raise HTTPException(status_code=401, detail="Unauthorized")
+#
+#     db_todo = models.Todo(task=req.task, user_id=user, id=req.id)
+#     db.add(db_todo)
+#     db.commit()
+#     db.refresh(db_todo)
+#     return db_todo
