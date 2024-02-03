@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from pydantic import BaseModel
-from typing import List, Annotated
+# from typing import List, Annotated
 import models
 from database import engine,SessionLocal
 from sqlalchemy.orm import Session
@@ -40,7 +40,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-db_dependency = Annotated[Session, Depends(get_db)]
+# db_dependency = Annotated[Session, Depends(get_db)]
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -53,7 +53,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 
-def authenticate_user(username: str, password: str, db: db_dependency):
+def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
     user = db.query(models.Userss).filter(models.Userss.username == username).first()
 
     if user and pwd_context.verify(password, user.password_hash):
@@ -63,12 +63,12 @@ def authenticate_user(username: str, password: str, db: db_dependency):
 
 # Auth API's
 @loginapis.get("/Listofusers")
-async def AllUser(db: db_dependency):
+async def AllUser(db: Session = Depends(get_db)):
     result = db.query(models.Userss).all()
     return result
 
 @loginapis.get("/getuser")
-async def UserDetails(user_id: int, db: db_dependency):
+async def UserDetails(user_id: int, db: Session = Depends(get_db)):
     result = db.query(models.Userss).filter(models.Userss.user_id == user_id).first()
     return result
 
@@ -83,7 +83,7 @@ async def login_for_access_token(form_data: OAuth2PasswordBearer = Depends()):
     return {"access_token": access_token, "token_type": "bearer"}
 
 @loginapis.post("/Register")
-async def register_user(req: UserBase, db: db_dependency):
+async def register_user(req: UserBase, db: Session = Depends(get_db)):
     hashed_password = pwd_context.hash(req.password_hash)
     db_user = models.Userss(username=req.username,password_hash=hashed_password,email=req.email)
     db.add(db_user)
@@ -94,12 +94,12 @@ async def register_user(req: UserBase, db: db_dependency):
 
 # TODO API's
 @todoapis.get("/list")
-async def TodoDetails(todo_id: int, db: db_dependency):
+async def TodoDetails(todo_id: int, db: Session = Depends(get_db)):
     result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
     return result
 
 @todoapis.post("/create")
-async def create_todo(req: TodoBase, db: db_dependency):
+async def create_todo(req: TodoBase, db: Session = Depends(get_db)):
     user = db.query(models.Users).filter(models.Users.user_id == 4).first()
     db_todo = models.Todo(task=req.task,user_id=user,id=req.id)
     db.add(db_todo)
