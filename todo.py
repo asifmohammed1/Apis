@@ -111,14 +111,14 @@ async def register_user(req: UserBase, db: Session = Depends(get_db)):
 #     result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
 #     return result
 #
-@todoapis.post("/create")
-async def create_todo(req: TodoBase, db: Session = Depends(get_db)):
-    user = db.query(models.Userss).filter(models.Userss.user_id == 6).first()
-    db_todo = models.Todo(task=req.task, user_id=77)
-    db.add(db_todo)
-    db.commit()
-    db.refresh(db_todo)
-    return db_todo
+# @todoapis.post("/create")
+# async def create_todo(req: TodoBase, db: Session = Depends(get_db)):
+#     user = db.query(models.Userss).filter(models.Userss.user_id == req.user_id).first()
+#     db_todo = models.Todo(task=req.task, user_id=req.user_id)
+#     db.add(db_todo)
+#     db.commit()
+#     db.refresh(db_todo)
+#     return db_todo
 
 @todoapis.get("/list")
 async def todo_details(todo_id: int, db: Session = Depends(get_db), token: str = Depends(verify_token)):
@@ -128,14 +128,14 @@ async def todo_details(todo_id: int, db: Session = Depends(get_db), token: str =
     else:
         raise HTTPException(status_code=404, detail="Todo not found")
 
-# @todoapis.post("/create")
-# async def create_todo(req: TodoBase, db: Session = Depends(get_db), token: str = Depends(verify_token)):
-#     user = db.query(models.Userss).filter(models.Userss.username == token).first()
-#     if not user:
-#         raise HTTPException(status_code=401, detail="Unauthorized")
-#
-#     db_todo = models.Todo(task=req.task, user_id=user, id=req.id)
-#     db.add(db_todo)
-#     db.commit()
-#     db.refresh(db_todo)
-#     return db_todo
+@todoapis.post("/create")
+async def create_todo(req: TodoBase, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+    user = db.query(models.Userss).filter(models.Userss.username == req.user_id).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    db_todo = models.Todo(task=req.task, user_id=req.user_id)
+    db.add(db_todo)
+    db.commit()
+    db.refresh(db_todo)
+    return db_todo
