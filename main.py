@@ -3,7 +3,7 @@ import os
 import urllib.parse as up
 import psycopg2
 from pydantic import BaseModel
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, APIRouter
 import urllib.parse
 from selenium.webdriver.common.by import By
 import time
@@ -12,11 +12,11 @@ from selenium.webdriver.chrome.options import Options
 import requests
 import json
 from fastapi.middleware.cors import CORSMiddleware
-# from todo import *
-# from todoapp import *
-from task import *
+from todo import *
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
+
+router_v1 = APIRouter(prefix="/v1", tags=["ChatGPT"])
 
 def db_connect():
     up.uses_netloc.append("postgres")
@@ -62,7 +62,7 @@ class GptInput(BaseModel):
     BOT:str
 
 
-@app.get("/read")
+@router_v1.get("/read")
 def read_data():
     cursor, conn = db_connect()
     cursor.execute('select * from apisec')
@@ -73,7 +73,7 @@ def read_data():
         res.append(dict(zip(columns, i)))
     return res
 
-@app.post("/create")
+@router_v1.post("/create")
 def create_data(test_table: CreateData):
     cursor, conn = db_connect()
     try:
@@ -92,7 +92,7 @@ def create_data(test_table: CreateData):
         }
     return res
 
-@app.post("/getbyid")
+@router_v1.post("/getbyid")
 def getbyid_data(req:int):
     cursor, conn = db_connect()
     cursor.execute(f'select * from apisec where id={req}')
@@ -103,7 +103,7 @@ def getbyid_data(req:int):
         res.append(dict(zip(columns, i)))
     return res
 
-@app.get("/querybyparams")
+@router_v1.get("/querybyparams")
 def querybyparams_data(params:str = Query(None)):
     cursor, conn = db_connect()
     try:
@@ -123,7 +123,7 @@ def querybyparams_data(params:str = Query(None)):
         data = "Invaild Query"
     return {"message":"query what you have enter is applied","data":data}
 
-@app.post("/querybyres")
+@router_v1.post("/querybyres")
 def querybyres_data(q:Queryenter):
     cursor, conn = db_connect()
     try:
@@ -141,12 +141,12 @@ def querybyres_data(q:Queryenter):
         data = "Invaild Query"
     return {"message": "query what you have enter is applied", "data": data}
 
-@app.get("/")
+@router_v1.get("/")
 def welcome():
     return {"message":"Welcome"}
 
 
-# @app.post("/chatgpt4")
+# @router_v1.post("/chatgpt4")
 # def chat_gpt4(input_text:GptInput):
 #     params = {'q': input_text.BOT}
 #     query_string = urllib.parse.urlencode(params)
@@ -172,7 +172,7 @@ def welcome():
 #     return {"data":res}
 
 
-@app.post("/create_logs")
+@router_v1.post("/create_logs")
 def create_logs(test_table: CreateLogs):
     cursor, conn = db_connect()
     # try:
@@ -197,7 +197,7 @@ def create_logs(test_table: CreateLogs):
     return res
 
 
-@app.post("/chatgpt")
+@router_v1.post("/chatgpt")
 def chat_gpt(input_text:GptInput):
     try:
         pload = json.dumps({
@@ -214,7 +214,7 @@ def chat_gpt(input_text:GptInput):
     return res  
 
 
-@app.post("/chatgptv2")
+@router_v1.post("/chatgptv2")
 def chat_gptv2(input_text:GptInput):
     try:
         replace = {"Meow!":"Hey!","Meow":"Hey","meon":"hey","pur":"thank you","purr":"thank you","growl":"howl","pur-fect":"perfect",
@@ -237,6 +237,6 @@ def chat_gptv2(input_text:GptInput):
     return res  
 
 
-@app.get("/zzzz")
-def zzzz():
-    return "done"
+app.include_router(router_v1)
+app.include_router(todoapis)
+app.include_router(loginapis)

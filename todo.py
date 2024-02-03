@@ -1,185 +1,108 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
+from fastapi import FastAPI, HTTPException, Depends, APIRouter
+from pydantic import BaseModel
+from typing import List, Annotated
+import models
+from database import engine,SessionLocal
+from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from jose import JWTError, jwt
-import psycopg2
-from psycopg2 import sql
-from typing import List
-from datetime import timedelta
 import secrets
+from fastapi.security import OAuth2PasswordBearer
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
 
-# Replace with your PostgreSQL connection string
-DATABASE_URL = "postgres://sonuasif748:jBYaXx0NqOh8@ep-white-rain-379558.ap-southeast-1.aws.neon.tech/neondb"
-
-# FastAPI app instance
 app = FastAPI()
+models.Base.metadata.create_all(bind=engine)
 
-# CORS Middleware to allow cross-origin requests
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+loginapis = APIRouter(prefix="/auth", tags=["Login API's"])
+todoapis = APIRouter(prefix="/todo", tags=["Todo API's"])
 
-# JWT token settings
-SECRET_KEY = secrets.token_urlsafe(32)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+class UserBase(BaseModel):
+    username: str
+    email: str
+    password_hash: str
+
+class TodoBase(BaseModel):
+    task: str
+    id: int
+    user_id: int
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+SECRET_KEY = secrets.token_hex(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# OAuth2 password bearer token
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+db_dependency = Annotated[Session, Depends(get_db)]
 
-# Function to create a database connection
-def get_db():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    try:
-        yield cursor
-    finally:
-        conn.close()
-
-# Functions to work with JWT tokens
-def create_access_token(data: dict):
+def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
 
-    return username
+def authenticate_user(username: str, password: str, db: db_dependency):
+    user = db.query(models.Userss).filter(models.Userss.username == username).first()
 
-# API to create a new user
-@app.post("/register")
-def register_user(username: str, email: str, password: str, db: cursor = Depends(get_db)):
-    # Hash the password before storing it in the database
-    hashed_password = pwd_context.hash(password)
-
-    # Insert new user into the users table
-    insert_query = sql.SQL("INSERT INTO users (username, email, password_hash) VALUES ({}, {}, {});").format(
-        sql.Literal(username),
-        sql.Literal(email),
-        sql.Literal(hashed_password)
-    )
-    db.execute(insert_query)
-    return {"message": "User registered successfully"}
-
-# API to authenticate and generate JWT token
-@app.post("/token")
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": form_data.username}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
-
-# Function to authenticate a user
-def authenticate_user(username: str, password: str, db: cursor = Depends(get_db)):
-    select_query = sql.SQL("SELECT * FROM users WHERE username = {}").format(sql.Literal(username))
-    db.execute(select_query)
-    user_data = db.fetchone()
-
-    if user_data and pwd_context.verify(password, user_data[3]):
-        return {"username": user_data[1], "email": user_data[2]}
+    if user and pwd_context.verify(password, user.password_hash):
+        return user
     return None
 
-# API to get the current user's profile
-@app.get("/users/me", response_model=dict)
-def read_users_me(current_user: dict = Depends(get_current_user)):
-    return current_user
 
-# API to create a new task
-@app.post("/tasks")
-def create_task(task: dict, db: cursor = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    # Insert new task into the tasks table
-    insert_query = sql.SQL("""
-        INSERT INTO tasks (user_id, title, description, due_date, is_completed) 
-        VALUES ({}, {}, {}, {}, {});
-    """).format(
-        sql.Literal(current_user["user_id"]),
-        sql.Literal(task["title"]),
-        sql.Literal(task.get("description")),
-        sql.Literal(task.get("due_date")),
-        sql.Literal(task.get("is_completed", False))
-    )
-    db.execute(insert_query)
-    return {"message": "Task created successfully"}
+# Auth API's
+@loginapis.get("/Listofusers")
+async def AllUser(db: db_dependency):
+    result = db.query(models.Userss).all()
+    return result
 
-# API to get all tasks for the current user
-@app.get("/tasks", response_model=List[dict])
-def read_tasks(skip: int = 0, limit: int = 100, db: cursor = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    # Select tasks for the current user
-    select_query = sql.SQL("""
-        SELECT * FROM tasks 
-        WHERE user_id = {}
-        OFFSET {}
-        LIMIT {};
-    """).format(
-        sql.Literal(current_user["user_id"]),
-        sql.Literal(skip),
-        sql.Literal(limit)
-    )
-    db.execute(select_query)
-    tasks = db.fetchall()
-    return tasks
+@loginapis.get("/getuser")
+async def UserDetails(user_id: int, db: db_dependency):
+    result = db.query(models.Userss).filter(models.Userss.user_id == user_id).first()
+    return result
 
-# API to update a task
-@app.put("/tasks/{task_id}")
-def update_task(task_id: int, task: dict, db: cursor = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    # Update task in the tasks table
-    update_query = sql.SQL("""
-        UPDATE tasks
-        SET title = {}, description = {}, due_date = {}, is_completed = {}
-        WHERE task_id = {} AND user_id = {};
-    """).format(
-        sql.Literal(task["title"]),
-        sql.Literal(task.get("description")),
-        sql.Literal(task.get("due_date")),
-        sql.Literal(task.get("is_completed", False)),
-        sql.Literal(task_id),
-        sql.Literal(current_user["user_id"])
-    )
-    db.execute(update_query)
-    return {"message": "Task updated successfully"}
+@loginapis.post("/token")
+async def login_for_access_token(form_data: OAuth2PasswordBearer = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
 
-# API to delete a task
-@app.delete("/tasks/{task_id}")
-def delete_task(task_id: int, db: cursor = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    # Delete task from the tasks table
-    delete_query = sql.SQL("""
-        DELETE FROM tasks
-        WHERE task_id = {} AND user_id = {};
-    """).format(
-        sql.Literal(task_id),
-        sql.Literal(current_user["user_id"])
-    )
-    db.execute(delete_query)
-    return {"message": "Task deleted successfully"}
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@loginapis.post("/Register")
+async def register_user(req: UserBase, db: db_dependency):
+    hashed_password = pwd_context.hash(req.password_hash)
+    db_user = models.Userss(username=req.username,password_hash=hashed_password,email=req.email)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+# TODO API's
+@todoapis.get("/list")
+async def TodoDetails(todo_id: int, db: db_dependency):
+    result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+    return result
+
+@todoapis.post("/create")
+async def create_todo(req: TodoBase, db: db_dependency):
+    user = db.query(models.Users).filter(models.Users.user_id == 4).first()
+    db_todo = models.Todo(task=req.task,user_id=user,id=req.id)
+    db.add(db_todo)
+    db.commit()
+    db.refresh(db_todo)
+    return db_todo
