@@ -106,11 +106,8 @@ async def register_user(req: UserBase, db: Session = Depends(get_db)):
 
 
 # TODO API's
-# @todoapis.get("/list")
-# async def TodoDetails(todo_id: int, db: Session = Depends(get_db)):
-#     result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
-#     return result
-#
+
+
 # @todoapis.post("/create")
 # async def create_todo(req: TodoBase, db: Session = Depends(get_db)):
 #     user = db.query(models.Userss).filter(models.Userss.user_id == req.user_id).first()
@@ -122,7 +119,7 @@ async def register_user(req: UserBase, db: Session = Depends(get_db)):
 
 @todoapis.get("/list")
 async def todo_details(todo_id: int, db: Session = Depends(get_db), token: str = Depends(verify_token)):
-    result = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+    result = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == token).first()
     if result:
         return result
     else:
@@ -130,12 +127,41 @@ async def todo_details(todo_id: int, db: Session = Depends(get_db), token: str =
 
 @todoapis.post("/create")
 async def create_todo(req: TodoBase, db: Session = Depends(get_db), token: str = Depends(verify_token)):
-    user = db.query(models.Userss).filter(models.Userss.username == req.user_id).first()
+    user = db.query(models.Userss).filter(models.Userss.username == token).first()
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    db_todo = models.Todo(task=req.task, user_id=req.user_id)
+    db_todo = models.Todo(task=req.task, user_id=user.id)
     db.add(db_todo)
     db.commit()
     db.refresh(db_todo)
     return db_todo
+
+
+@todoapis.put("/edit/{todo_id}")
+async def edit_todo(todo_id: int, req: TodoBase, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+    # Check if the todo exists and belongs to the authenticated user
+    existing_todo = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == token).first()
+    if not existing_todo:
+        raise HTTPException(status_code=404, detail="Todo not found")
+
+    # Update the todo
+    existing_todo.task = req.task
+    db.commit()
+    db.refresh(existing_todo)
+
+    return existing_todo
+
+
+@todoapis.delete("/delete/{todo_id}")
+async def delete_todo(todo_id: int, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+    # Check if the todo exists and belongs to the authenticated user
+    existing_todo = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == token).first()
+    if not existing_todo:
+        raise HTTPException(status_code=404, detail="Todo not found")
+
+    # Delete the todo
+    db.delete(existing_todo)
+    db.commit()
+
+    return {"message": "Todo deleted successfully"}

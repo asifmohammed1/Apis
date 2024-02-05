@@ -16,7 +16,9 @@ from todo import *
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 
-router_v1 = APIRouter(prefix="/v1", tags=["ChatGPT"])
+chatgpt = APIRouter(prefix="/v1", tags=["ChatGPT"])
+sql = APIRouter(prefix="/v1", tags=["SQL"])
+APIs = APIRouter(prefix="/v1", tags=["API's"])
 
 def db_connect():
     up.uses_netloc.append("postgres")
@@ -62,7 +64,7 @@ class GptInput(BaseModel):
     BOT:str
 
 
-@router_v1.get("/read")
+@APIs.get("/read")
 def read_data():
     cursor, conn = db_connect()
     cursor.execute('select * from apisec')
@@ -73,7 +75,7 @@ def read_data():
         res.append(dict(zip(columns, i)))
     return res
 
-@router_v1.post("/create")
+@APIs.post("/create")
 def create_data(test_table: CreateData):
     cursor, conn = db_connect()
     try:
@@ -92,7 +94,7 @@ def create_data(test_table: CreateData):
         }
     return res
 
-@router_v1.post("/getbyid")
+@APIs.post("/getbyid")
 def getbyid_data(req:int):
     cursor, conn = db_connect()
     cursor.execute(f'select * from apisec where id={req}')
@@ -103,7 +105,7 @@ def getbyid_data(req:int):
         res.append(dict(zip(columns, i)))
     return res
 
-@router_v1.get("/querybyparams")
+@sql.get("/querybyparams")
 def querybyparams_data(params:str = Query(None)):
     cursor, conn = db_connect()
     try:
@@ -123,7 +125,7 @@ def querybyparams_data(params:str = Query(None)):
         data = "Invaild Query"
     return {"message":"query what you have enter is applied","data":data}
 
-@router_v1.post("/querybyres")
+@sql.post("/querybyres")
 def querybyres_data(q:Queryenter):
     cursor, conn = db_connect()
     try:
@@ -141,7 +143,7 @@ def querybyres_data(q:Queryenter):
         data = "Invaild Query"
     return {"message": "query what you have enter is applied", "data": data}
 
-@router_v1.get("/")
+@APIs.get("/")
 def welcome():
     return {"message":"Welcome"}
 
@@ -172,7 +174,7 @@ def welcome():
 #     return {"data":res}
 
 
-@router_v1.post("/create_logs")
+@chatgpt.post("/create_logs")
 def create_logs(test_table: CreateLogs):
     cursor, conn = db_connect()
     # try:
@@ -197,7 +199,7 @@ def create_logs(test_table: CreateLogs):
     return res
 
 
-@router_v1.post("/chatgpt")
+@chatgpt.post("/chatgpt")
 def chat_gpt(input_text:GptInput):
     try:
         pload = json.dumps({
@@ -214,7 +216,7 @@ def chat_gpt(input_text:GptInput):
     return res  
 
 
-@router_v1.post("/chatgptv2")
+@chatgpt.post("/chatgptv2")
 def chat_gptv2(input_text:GptInput):
     try:
         replace = {"Meow!":"Hey!","Meow":"Hey","meon":"hey","pur":"thank you","purr":"thank you","growl":"howl","pur-fect":"perfect",
@@ -237,6 +239,8 @@ def chat_gptv2(input_text:GptInput):
     return res  
 
 
-app.include_router(router_v1)
+app.include_router(chatgpt)
+app.include_router(sql)
+app.include_router(APIs)
 app.include_router(todoapis)
 app.include_router(loginapis)
