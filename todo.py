@@ -135,7 +135,7 @@ async def create_todo(req: TodoBase, db: Session = Depends(get_db), token: str =
     db.add(db_todo)
     db.commit()
     db.refresh(db_todo)
-    return db_todo
+    return db_todo 
 
 
 @todoapis.put("/edit/{todo_id}")
