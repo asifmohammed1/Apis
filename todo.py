@@ -74,7 +74,7 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 
 
 # Auth API's
-@loginapis.get("/Listofusers")
+@loginapis.get("/listofusers")
 async def AllUser(db: Session = Depends(get_db)):
     result = db.query(models.Userss).all()
     return result
@@ -95,7 +95,7 @@ async def login_for_access_token(username: str, password: str, db: Session = Dep
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@loginapis.post("/Register")
+@loginapis.post("/register")
 async def register_user(req: UserBase, db: Session = Depends(get_db)):
     hashed_password = pwd_context.hash(req.password_hash)
     db_user = models.Userss(username=req.username,password_hash=hashed_password,email=req.email)
