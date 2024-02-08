@@ -33,18 +33,6 @@ def db_connect():
     return cursor, conn
 
 
-
-# app = FastAPI()
-origins = ["*"]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
 class CreateData(BaseModel):
     name:str
     number:int
