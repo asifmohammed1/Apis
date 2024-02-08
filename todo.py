@@ -31,6 +31,10 @@ class UserBase(BaseModel):
     email: str
     password_hash: str
 
+class LoginBase(BaseModel):
+    username: str
+    password: str
+
 class TodoBase(BaseModel):
     task: str
     # id: int
@@ -93,9 +97,9 @@ async def UserDetails(user_id: int, db: Session = Depends(get_db)):
     return result
 
 @loginapis.post("/token")
-async def login_for_access_token(username: str, password: str, db: Session = Depends(get_db)):
-    user = db.query(models.Userss).filter(models.Userss.username == username).first()
-    if not user or not pwd_context.verify(password, user.password_hash):
+async def login_for_access_token(req: LoginBase, db: Session = Depends(get_db)):
+    user = db.query(models.Userss).filter(models.Userss.username == req.username).first()
+    if not user or not pwd_context.verify(req.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
