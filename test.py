@@ -33,12 +33,12 @@ class SemanticsVerificationHome(aetest.Testcase):
         """
         try:
             try:
-                ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+                ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
             except:
                 logger.error("Failed to navigate to Geo Redundancy Manage page")
                 CommonUtilities.sleep_before_next_click(WAIT_FOR_5_SEC)
                 logger.info("Retrying....")
-                ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+                ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
             CommonUtilities.sleep_before_next_click(WAIT_FOR_10_SEC)
             grm_ui_obj = GRMUI(driver)
             if not grm_ui_obj.validate_semantics():
@@ -56,12 +56,12 @@ class SemanticsVerificationHome(aetest.Testcase):
         """
         try:
             try:
-                ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+                ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
             except:
                 logger.error("Failed to navigate to Geo Redundancy Manage page.")
                 CommonUtilities.sleep_before_next_click(WAIT_FOR_5_SEC)
                 logger.info("Retrying...")
-                ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+                ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
             CommonUtilities.sleep_before_next_click(WAIT_FOR_10_SEC)
             grm_ui_obj = GRMUI(driver)
             grm_ui_obj.click_inventory_button()
@@ -81,12 +81,12 @@ def how_it_works_semantics_verification_test(self, driver):
     """
     try:
         try:
-            ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+            ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
         except:
             logger.error("Failed to navigate to Geo Redundancy Manage page.")
             CommonUtilities.sleep_before_next_click(WAIT_FOR_5_SEC)
             logger.info("Retrying...")
-            ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+            ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
         CommonUtilities.sleep_before_next_click(WAIT_FOR_10_SEC)
         grm_ui_obj = GRMUI(driver)
         grm_ui_obj.goto_how_it_works_page()
@@ -115,12 +115,12 @@ class SemanticsVerificationJobsPage(aetest.Testcase):
         """
         try:
             try:
-                ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+                ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
             except:
                 logger.error("Failed to navigate to Geo Redundancy Manage page.")
                 CommonUtilities.sleep_before_next_click(WAIT_FOR_5_SEC)
                 logger.info("Retrying....")
-                ApplicationUl.go_to_admin_geo_redundancy_manager_page(self, driver)
+                ApplicationUI.go_to_admin_geo_redundancy_manager_page(self, driver)
             CommonUtilities.sleep_before_next_click(WAIT_FOR_5_SEC)
             logger.info("Clicking Jobs page")
             grm_ui_obj = GRMUI(driver)
