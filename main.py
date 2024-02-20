@@ -231,3 +231,15 @@ app.include_router(sql)
 app.include_router(APIs)
 app.include_router(todoapis)
 app.include_router(loginapis)
+
+
+@APIs.get("/testing_f")
+def read_data():
+    cursor, conn = db_connect()
+    cursor.execute('select * from apisec')
+    data = cursor.fetchall()
+    res = []
+    for i in data:
+        columns = [desc[0] for desc in cursor.description]
+        res.append(dict(zip(columns, i)))
+    return res
