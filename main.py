@@ -14,6 +14,11 @@ import json
 from todo import *
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
+import pathlib
+import textwrap
+import google.generativeai as genai
+from IPython.display import display
+from IPython.display import Markdown
 
 chatgpt = APIRouter(prefix="/v1", tags=["ChatGPT"])
 sql = APIRouter(prefix="/v1", tags=["SQL"])
@@ -160,6 +165,15 @@ def welcome():
 #     res = driver.find_element(By.XPATH, '//*[@class="chatgpt-result"]').text
 #     return {"data":res}
 
+gemini_key = "AIzaSyAmIX0jvgKL1D--iQWXxIYra6mXZqNfItw"
+genai.configure(api_key=gemini_key)
+
+@chatgpt.post("/gemini_aistudio")
+def gemini_aistudio():
+    model = genai.GenerativeModel('gemini-pro')
+    res = model.generate_content("What is the meaning of life?")
+    return res
+
 
 @chatgpt.post("/create_logs")
 def create_logs(test_table: CreateLogs):
@@ -231,15 +245,3 @@ app.include_router(sql)
 app.include_router(APIs)
 app.include_router(todoapis)
 app.include_router(loginapis)
-
-
-@APIs.get("/testing_f")
-def read_data():
-    cursor, conn = db_connect()
-    cursor.execute('select * from apisec')
-    data = cursor.fetchall()
-    res = []
-    for i in data:
-        columns = [desc[0] for desc in cursor.description]
-        res.append(dict(zip(columns, i)))
-    return res
