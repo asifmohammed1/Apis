@@ -169,10 +169,10 @@ gemini_key = "AIzaSyAmIX0jvgKL1D--iQWXxIYra6mXZqNfItw"
 genai.configure(api_key=gemini_key)
 
 @chatgpt.post("/gemini_aistudio")
-def gemini_aistudio():
+def gemini_aistudio(req: GptInput):
     model = genai.GenerativeModel('gemini-pro')
-    res = model.generate_content("What is the meaning of life?")
-    return res
+    res = model.generate_content(req.BOT)
+    return {"Responses": res.text}
 
 
 @chatgpt.post("/create_logs")
