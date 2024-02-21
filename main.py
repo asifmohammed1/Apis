@@ -14,7 +14,7 @@ import json
 from todo import *
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
-# import google.generativeai as genai
+import google.generativeai as genai
 
 chatgpt = APIRouter(prefix="/v1", tags=["ChatGPT"])
 sql = APIRouter(prefix="/v1", tags=["SQL"])
@@ -161,14 +161,14 @@ def welcome():
 #     res = driver.find_element(By.XPATH, '//*[@class="chatgpt-result"]').text
 #     return {"data":res}
 
-# gemini_key = "AIzaSyAmIX0jvgKL1D--iQWXxIYra6mXZqNfItw"
-# genai.configure(api_key=gemini_key)
+gemini_key = "AIzaSyAmIX0jvgKL1D--iQWXxIYra6mXZqNfItw"
+genai.configure(api_key=gemini_key)
 
-# @chatgpt.post("/gemini_aistudio")
-# def gemini_aistudio(req: GptInput):
-#     model = genai.GenerativeModel('gemini-pro')
-#     res = model.generate_content(req.BOT)
-#     return {"Responses": res.text}
+@chatgpt.post("/gemini_aistudio")
+def gemini_aistudio(req: GptInput):
+    model = genai.GenerativeModel('gemini-pro')
+    res = model.generate_content(req.BOT)
+    return {"Responses": res.text}
 
 
 @chatgpt.post("/create_logs")
