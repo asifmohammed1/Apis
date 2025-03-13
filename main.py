@@ -237,7 +237,7 @@ def chat_gptv2(input_text:GptInput):
     return res  
 
 @Tests.get("/test")
-def testapi
+def testapi():
     return {"Responses": "Hello"}
 
 
