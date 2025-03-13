@@ -235,9 +235,14 @@ def chat_gptv2(input_text:GptInput):
         res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
     return res  
 
+@Test.get("/test")
+def test():
+    return {"Responses": "Hello"}
+
 
 app.include_router(chatgpt)
 app.include_router(sql)
 app.include_router(APIs)
 app.include_router(todoapis)
 app.include_router(loginapis)
+app.include_router(Test)
