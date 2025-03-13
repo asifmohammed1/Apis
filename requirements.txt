@@ -38,3 +38,4 @@ wsproto==1.2.0
 # google-generativeai==0.3.2
 wordninja==2.0.0
 joblib==1.2.0
+scikit-learn==1.1.3
