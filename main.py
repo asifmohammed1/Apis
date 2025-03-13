@@ -19,6 +19,7 @@ from todo import *
 chatgpt = APIRouter(prefix="/v1", tags=["ChatGPT"])
 sql = APIRouter(prefix="/v1", tags=["SQL"])
 APIs = APIRouter(prefix="/v1", tags=["API's"])
+Tests = APIRouter(prefix="/v1", tags=["Test's"])
 
 def db_connect():
     up.uses_netloc.append("postgres")
@@ -235,8 +236,8 @@ def chat_gptv2(input_text:GptInput):
         res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
     return res  
 
-@Test.get("/test")
-def test():
+@Tests.get("/test")
+def testapi
     return {"Responses": "Hello"}
 
 
@@ -245,4 +246,4 @@ app.include_router(sql)
 app.include_router(APIs)
 app.include_router(todoapis)
 app.include_router(loginapis)
-app.include_router(Test)
+app.include_router(Tests)
