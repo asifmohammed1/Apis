@@ -257,6 +257,31 @@ def field_type(reqdata:List):
         res[i]=types[val]
     return res
 
+@Fields.post("/predict")
+def predict_faker(reqdata: List):
+    # Load the model using joblib
+    model = joblib.load('fakermodel')
+    res = dict()
+    # Get the CountVectorizer object from the model
+    count_vect = model.named_steps.vect
+    # This list consists of the strings that we are avoiding from word ninja.
+    avoid_wordninja = ['fname','lname','mname','f name','l name','m name','provider guid','text guid','customer guid','customer wallet guid','app guid','guid','otp','pwd','ssn','acc fname','acc lname','str lname','new pwd','otp verified number','otp code','new mpin','account fname']
+   
+    for i in reqdata:
+        item = re.sub('[^A-Za-z0-9]+', ' ', i).lower()
+        if item in avoid_wordninja:
+            # Transform the string using the CountVectorizer
+            r = count_vect.transform([item])[0]
+        else:
+            # Split the string into multiple words using wordninja
+            t = wordninja.split(item)
+            # Join the words into a single string and transform using the CountVectorizer
+            r = count_vect.transform([" ".join((t))])[0]
+        val = model.named_steps.clf.predict(r)[0]
+        res[i]=val
+    
+    return res
+
 
 app.include_router(chatgpt)
 app.include_router(sql)
