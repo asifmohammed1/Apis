@@ -12,6 +12,9 @@ from selenium.webdriver.chrome.options import Options
 import requests
 import json
 from todo import *
+import joblib
+from typing import List
+import wordninja
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 # import google.generativeai as genai
@@ -20,6 +23,7 @@ chatgpt = APIRouter(prefix="/v1", tags=["ChatGPT"])
 sql = APIRouter(prefix="/v1", tags=["SQL"])
 APIs = APIRouter(prefix="/v1", tags=["API's"])
 Tests = APIRouter(prefix="/v1", tags=["Test's"])
+Fields = APIRouter(prefix="/v1", tags=["Fields's"])
 
 def db_connect():
     up.uses_netloc.append("postgres")
@@ -240,6 +244,19 @@ def chat_gptv2(input_text:GptInput):
 def testapi():
     return {"Responses": "Hello"}
 
+types = {0:"str",1:"int",2:"float",3:"bool"}
+
+@Fields.get("/FieldType")
+def field_type(reqdata:List):
+    model = joblib.load('Fieldsmodel')
+    res = dict()
+    st = " "
+    for i in reqdata:
+        t = wordninja.split(i)
+        val = model.predict([st.join(t)])[0]
+        res[i]=types[val]
+    return res
+
 
 app.include_router(chatgpt)
 app.include_router(sql)
@@ -247,3 +264,4 @@ app.include_router(APIs)
 app.include_router(todoapis)
 app.include_router(loginapis)
 app.include_router(Tests)
+app.include_router(Fields)
