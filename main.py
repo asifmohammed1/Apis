@@ -140,40 +140,12 @@ def querybyres_data(q:Queryenter):
 def welcome():
     return {"message":"Welcome"}
 
-
-# @router_v1.post("/chatgpt4")
-# def chat_gpt4(input_text:GptInput):
-#     params = {'q': input_text.BOT}
-#     query_string = urllib.parse.urlencode(params)
-#     BaseURL = f"https://googpt.ai/?{query_string}&hl=en"
-#     # page = requests.get(BaseURL).text
-#     # soup = BeautifulSoup(page, 'html.parser')
-#     # soup_alt = BeautifulSoup(page, 'html.parser')
-#     # element = soup.find('div', {'class': 'chatgpt-result'})
-#     # res = element.text
-#     # obj1 = ChromeDriverManager()
-#     # path = obj1.install()
-#     s = HTTPSession()
-#     options = Options()
-#     options.add_argument('--headless')
-#     options.add_argument('--no-sandbox')
-#     options.add_argument('--disable-dev-shm-usage')
-#     driver = webdriver.Chrome(options=options)
-#     # driver = webdriver.Chrome()
-#     driver.get(BaseURL)
-#     time.sleep(10)
-#     driver.implicitly_wait(10)
-#     res = driver.find_element(By.XPATH, '//*[@class="chatgpt-result"]').text
-#     return {"data":res}
-
-# gemini_key = "AIzaSyAmIX0jvgKL1D--iQWXxIYra6mXZqNfItw"
-# genai.configure(api_key=gemini_key)
-
 @chatgpt.post("/gemini_aistudio")
 def gemini_aistudio(req: GptInput):
-    # model = genai.GenerativeModel('gemini-pro')
-    # res = model.generate_content(req.BOT)
-    return {"Responses": "res.text"}
+    model = genai.GenerativeModel(model_name='gemini-2.0-flash')
+    # chat = model.start_chat()
+    res = model.generate_content(req.BOT)
+    return {"Responses": res.text}
 
 
 @chatgpt.post("/create_logs")
@@ -247,40 +219,20 @@ def testapi():
 types = {0:"str",1:"int",2:"float",3:"bool"}
 
 @Fields.get("/FieldType")
-def field_type(reqdata:List):
+def field_type(reqdata:str):
     model = joblib.load('Fieldsmodel')
-    res = dict()
-    st = " "
-    for i in reqdata:
-        t = wordninja.split(i)
-        val = model.predict([st.join(t)])[0]
-        res[i]=types[val]
+    t = wordninja.split(reqdata)
+    val = model.predict(t)[0]
+    res = types[val]
     return res
 
 @Fields.post("/predict")
-def predict_faker(reqdata: List):
-    # Load the model using joblib
+def predict_faker(reqdata: str):
     model = joblib.load('fakermodel')
-    res = dict()
-    # Get the CountVectorizer object from the model
     count_vect = model.named_steps.vect
-    # This list consists of the strings that we are avoiding from word ninja.
-    avoid_wordninja = ['fname','lname','mname','f name','l name','m name','provider guid','text guid','customer guid','customer wallet guid','app guid','guid','otp','pwd','ssn','acc fname','acc lname','str lname','new pwd','otp verified number','otp code','new mpin','account fname']
-   
-    for i in reqdata:
-        item = re.sub('[^A-Za-z0-9]+', ' ', i).lower()
-        if item in avoid_wordninja:
-            # Transform the string using the CountVectorizer
-            r = count_vect.transform([item])[0]
-        else:
-            # Split the string into multiple words using wordninja
-            t = wordninja.split(item)
-            # Join the words into a single string and transform using the CountVectorizer
-            r = count_vect.transform([" ".join((t))])[0]
-        val = model.named_steps.clf.predict(r)[0]
-        res[i]=val
-    
-    return res
+    r = count_vect.transform([reqdata])[0]
+    val = model.named_steps.clf.predict(r)[0]
+    return val
 
 
 app.include_router(chatgpt)
