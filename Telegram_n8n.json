@@ -1,0 +1,416 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "a33e3f45-f16e-4107-937e-0ce1d230060f",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        368,
+        240
+      ],
+      "webhookId": "912e007f-19d9-4b5a-a90e-12ba01c9978d",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "ntUCp2XoQkXnktXl",
+          "name": "Rising Star"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "id": "9b33ec46-8772-4bfb-a448-fea5a673bbaa",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        1680,
+        592
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "8cdd7ba8-c998-4ea7-b861-8dcaf12febfe",
+      "name": "Get Voice",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        1008,
+        432
+      ],
+      "webhookId": "1962cd81-9991-4199-a78a-2250bf29631a",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "ntUCp2XoQkXnktXl",
+          "name": "Rising Star"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "0a236099-525e-4748-a57d-8b8e2c63c48b",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": ""
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "24b7e8b8-6fce-4ddc-94b6-30b852891995",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{  $json.message.voice.file_id }}",
+                    "rightValue": ""
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7fa34d0e-5215-44e5-b1d3-1e8abb5771ae",
+      "name": "Text Or Voice",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        800,
+        240
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "b90a586b-5d90-4f76-8e4e-bd44095f9aac",
+      "name": "Transcribe The Voice",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1200,
+        432
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "vnq7BAjHx9gIZVxQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a personal assistant that helps user to fulfill their request.\n\nWhen you are asked to perform a task on the current date, please use the current time and date: {{$now}}\n\n## Output\nYou should output the result and don't include any link. Just mentioned where you added it to."
+        }
+      },
+      "id": "587adf8a-2e69-4078-a603-84f0322207cb",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1536,
+        304
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "operation": "sendChatAction",
+        "chatId": "={{ $json.message.chatId }}"
+      },
+      "id": "2455c7cb-f341-4891-9096-dc62116298c0",
+      "name": "Typing Action",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        800,
+        64
+      ],
+      "webhookId": "2479f7f8-6d54-4d45-921e-af6dcfae768e",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "ntUCp2XoQkXnktXl",
+          "name": "Rising Star"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$('Telegram Trigger').first().json.message.chat.id}}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "8c2b6195-6101-4652-848c-505d13a3c1d2",
+      "name": "Send Response To Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        1904,
+        304
+      ],
+      "webhookId": "76e4b8a4-1086-4d24-b60e-b96942d83bdf",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "ntUCp2XoQkXnktXl",
+          "name": "Rising Star"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "590b803f-833c-4854-bde7-5241d25b2b32",
+              "name": "message.text",
+              "type": "string",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "id": "303e0b5d-3d37-48fc-bbd3-ce62dbe7ef78",
+              "name": "sessionId",
+              "type": "string",
+              "value": "={{ $json.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c8fd047d-8575-484e-939a-46064b81d035",
+      "name": "Send Context To AI Agent",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1200,
+        224
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bb71aef-0ca1-4c26-95e1-c0c83bc82068",
+              "name": "message.text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "id": "692a2bae-35da-41d3-be8d-32c0f5dfbbef",
+              "name": "sessionId",
+              "type": "string",
+              "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f7e90526-08a5-4a59-956f-d39e6ff472f0",
+      "name": "Send Transcribe Context To AI Agent",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1376,
+        432
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        592
+      ],
+      "id": "3f97ef68-3bb5-4aac-9c77-2332b94c990b",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "XZC5gFZna4f4jFN4",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Or Voice",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Typing Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voice": {
+      "main": [
+        [
+          {
+            "node": "Transcribe The Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Or Voice": {
+      "main": [
+        [
+          {
+            "node": "Send Context To AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe The Voice": {
+      "main": [
+        [
+          {
+            "node": "Send Transcribe Context To AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Response To Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Typing Action": {
+      "main": [
+        []
+      ]
+    },
+    "Send Context To AI Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Transcribe Context To AI Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateId": "4696",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "40d945f8b06fc55fae36a88be88bc922d8a92357ef48712654c113b22a9c783f"
+  }
+}

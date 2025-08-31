@@ -15,6 +15,8 @@ from todo import *
 import joblib
 from typing import List
 import wordninja
+import n8n_TelegramBot
+import json
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 # import google.generativeai as genai
@@ -139,6 +141,16 @@ def querybyres_data(q:Queryenter):
 @APIs.get("/")
 def welcome():
     return {"message":"Welcome"}
+
+@app.get("/get-json")
+def get_json():
+    file_path = os.path.join(os.path.dirname(__file__), "Telegram_n8n.json")
+    
+    return FileResponse(
+        path=file_path,
+        media_type="application/json",
+        filename="Telegram_n8n.json"
+    )
 
 @chatgpt.post("/gemini_aistudio")
 def gemini_aistudio(req: GptInput):
