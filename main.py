@@ -15,7 +15,6 @@ from todo import *
 import joblib
 from typing import List
 import wordninja
-import n8n_TelegramBot
 import json
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
