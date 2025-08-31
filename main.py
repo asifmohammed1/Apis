@@ -16,6 +16,7 @@ import joblib
 from typing import List
 import wordninja
 import json
+from fastapi.responses import JSONResponse
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 # import google.generativeai as genai
@@ -141,15 +142,12 @@ def querybyres_data(q:Queryenter):
 def welcome():
     return {"message":"Welcome"}
 
-@app.get("/get-json")
-def get_json():
-    file_path = os.path.join(os.path.dirname(__file__), "Telegram_n8n.json")
-    
-    return FileResponse(
-        path=file_path,
-        media_type="application/json",
-        filename="Telegram_n8n.json"
-    )
+@app.get("/n8n/template")
+def view_json():
+    file_path = os.path.join(os.path.dirname(__file__), "n8n.json")
+    with open(file_path, "r") as f:
+        data = json.load(f)
+    return JSONResponse(content=data)
 
 @chatgpt.post("/gemini_aistudio")
 def gemini_aistudio(req: GptInput):
