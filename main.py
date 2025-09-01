@@ -255,7 +255,29 @@ app.include_router(Fields)
 
 # Integrate with the OpenRouter
 
-# OpenRouter_Key = "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"
+OpenRouter_Key = "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"
+OpenRouterAPI = "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"
+
+
+def gptrun(message):
+    msg = message + " **one line respond**"
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    payload = {
+        "model": "meta-llama/llama-3.3-70b-instruct:free",
+        "messages": [
+            {
+                "role": "user",
+                "content": msg
+            }
+        ]
+    }
+    headers = {
+        "Authorization": f"Bearer {OpenRouter_Key}",
+        "Content-Type": "application/json"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    res = response.json()['choices'][0]['message']['content']
+    return res
 
 
 
@@ -275,8 +297,8 @@ I am excited to have a conversation with you! What can I do for you!\
 
 @bot.message_handler(func=lambda message: True)
 async def echo_message(message):
-
-    await bot.reply_to(message, message.text)
+    output = gptrun(message.text)
+    await bot.reply_to(message, output)
 
 async def run_bot():
     await bot.polling()
