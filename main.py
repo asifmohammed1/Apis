@@ -251,3 +251,47 @@ app.include_router(todoapis)
 app.include_router(loginapis)
 app.include_router(Tests)
 app.include_router(Fields)
+
+
+# Integrate with the OpenRouter
+# import requests
+# import json
+# OpenRouter_Key = "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"
+
+
+
+from telebot.async_telebot import AsyncTeleBot
+import asyncio
+
+bot = AsyncTeleBot('8045583602:AAHI_Kc6RYleCjLZjtjLckbcuy6QvSAfKBQ')
+
+bot_task = None
+
+@bot.message_handler(commands=['help', 'start'])
+async def send_welcome(message):
+    await bot.reply_to(message, """\
+Hi there, I am Rising Star Bot.
+I am excited to have a conversation with you! What can I do for you!\
+""")
+
+@bot.message_handler(func=lambda message: True)
+async def echo_message(message):
+
+    await bot.reply_to(message, message.text)
+
+async def run_bot():
+    await bot.polling()
+
+@app.on_event("startup")
+async def startup_event():
+    global bot_task
+    bot_task = asyncio.create_task(run_bot())
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    bot_task.cancel()
+    await bot.close_session()
+
+@app.get("/")
+async def root():
+    return {"message": "Bot is running"}
