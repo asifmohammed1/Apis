@@ -40,3 +40,4 @@ wordninja==2.0.0
 joblib==1.2.0
 scikit-learn
 scipy
+pyTelegramBotAPI
