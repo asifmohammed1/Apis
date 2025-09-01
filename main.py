@@ -254,8 +254,7 @@ app.include_router(Fields)
 
 
 # Integrate with the OpenRouter
-# import requests
-# import json
+
 # OpenRouter_Key = "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"
 
 
