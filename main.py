@@ -255,11 +255,14 @@ app.include_router(Fields)
 
 # Integrate with the OpenRouter
 
-OpenRouter_Key = "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"
-OpenRouterAPI = "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"
+
 
 
 def gptrun(message):
+    cursor, conn = db_connect()
+    cursor.execute("SELECT key FROM keys WHERE name = %s", ("openrouter",))
+    result = cursor.fetchone()
+    OpenRouterAPI = result[0]
     msg = message + " **one line respond**"
     url = "https://openrouter.ai/api/v1/chat/completions"
     payload = {
@@ -272,7 +275,7 @@ def gptrun(message):
         ]
     }
     headers = {
-        "Authorization": f"Bearer {OpenRouter_Key}",
+        "Authorization": f"Bearer {OpenRouterAPI}",
         "Content-Type": "application/json"
     }
     response = requests.post(url, json=payload, headers=headers)
@@ -297,7 +300,10 @@ I am excited to have a conversation with you! What can I do for you!\
 
 @bot.message_handler(func=lambda message: True)
 async def echo_message(message):
-    output = gptrun(message.text)
+    try:
+        output = gptrun(message.text)
+    except:
+        output = "Due to high traffic, the bot is under maintenance. Please try again later."
     await bot.reply_to(message, output)
 
 async def run_bot():
