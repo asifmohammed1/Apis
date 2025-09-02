@@ -257,7 +257,6 @@ app.include_router(Fields)
 
 
 
-
 def gptrun(message):
     cursor, conn = db_connect()
     cursor.execute("SELECT key FROM keys WHERE name = %s", ("openrouter",))
