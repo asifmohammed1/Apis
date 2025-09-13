@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5bd49c83-f0b8-4d5e-8964-5a38c931ffd9" name="Changes" comment="bot ready with llama 3.3" />
+    <list default="true" id="5bd49c83-f0b8-4d5e-8964-5a38c931ffd9" name="Changes" comment="gradio chat req">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -95,22 +97,38 @@
       <option name="project" value="LOCAL" />
       <updated>1756730375661</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="openrouter apis">
+      <option name="closed" value="true" />
+      <created>1757752255080</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1757752255080</updated>
+    </task>
+    <task id="LOCAL-00003" summary="gradio chat">
+      <option name="closed" value="true" />
+      <created>1757753500609</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1757753500609</updated>
+    </task>
+    <task id="LOCAL-00004" summary="gradio chat req">
+      <option name="closed" value="true" />
+      <created>1757753540201</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1757753540201</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="bot ready with llama 3.3" />
-    <option name="LAST_COMMIT_MESSAGE" value="bot ready with llama 3.3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>281</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="openrouter apis" />
+    <MESSAGE value="gradio chat" />
+    <MESSAGE value="gradio chat req" />
+    <option name="LAST_COMMIT_MESSAGE" value="gradio chat req" />
   </component>
 </project>

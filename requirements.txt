@@ -42,4 +42,4 @@ scikit-learn
 scipy
 pyTelegramBotAPI
 aiohttp
-gradio
+gradio==5.45.0
