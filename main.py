@@ -149,12 +149,38 @@ def view_json():
         data = json.load(f)
     return JSONResponse(content=data)
 
-@chatgpt.post("/gemini_aistudio")
-def gemini_aistudio(req: GptInput):
-    model = genai.GenerativeModel(model_name='gemini-2.0-flash')
-    # chat = model.start_chat()
-    res = model.generate_content(req.BOT)
-    return {"Responses": res.text}
+@chatgpt.get("/Listofmodels")
+def list_of_models():
+    url = "https://openrouter.ai/api/v1/models"
+    response = requests.get(url, headers={})
+    res = response.json()['data']
+    ids = [item["id"] for item in res if "free" in item.get("id", "").lower()]
+    return {"Model Names":ids}
+
+@chatgpt.post("/OpenRouter")
+def openrouter_gpt(req: GptInput):
+    cursor, conn = db_connect()
+    cursor.execute("SELECT key FROM keys WHERE name = %s", ("openrouter",))
+    result = cursor.fetchone()
+    OpenRouterAPI = result[0]
+    msg = req.BOT + " **one line respond**"
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    payload = {
+        "model": "meta-llama/llama-3.3-70b-instruct:free",
+        "messages": [
+            {
+                "role": "user",
+                "content": msg
+            }
+        ]
+    }
+    headers = {
+        "Authorization": f"Bearer {OpenRouterAPI}",
+        "Content-Type": "application/json"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    res = response.json()['choices'][0]['message']['content']
+    return {"Responses": res}
 
 
 @chatgpt.post("/create_logs")
@@ -180,46 +206,6 @@ def create_logs(test_table: CreateLogs):
     #         "message": "something when wrong"
     #     }
     return res
-
-
-@chatgpt.post("/chatgpt")
-def chat_gpt(input_text:GptInput):
-    try:
-        pload = json.dumps({
-    "prompt": input_text.BOT,
-    "conversation": 1
-    })
-        headers = {
-    'Content-Type': 'application/json',
-    }
-        r = requests.post('https://www.catgpt.dog/complete', data=pload, headers=headers)
-        res = {"Response":json.loads(r.text)['completion']}
-    except:
-        res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
-    return res  
-
-
-@chatgpt.post("/chatgptv2")
-def chat_gptv2(input_text:GptInput):
-    try:
-        replace = {"Meow!":"Hey!","Meow":"Hey","meon":"hey","pur":"thank you","purr":"thank you","growl":"howl","pur-fect":"perfect",
-                "meow-meow":"hey","Me-ow!":"Hey!","Me-ow":"Hey","prrr":"","prrrr":"","me-ow":"hey", "Purr...":"","Purr.":"",
-                "pur":"","Purrr.":"","Purr.":"","Prrrr...":"", "Meow,":"Hey,","Purr.":""}
-        pload = json.dumps({
-    "prompt": input_text.BOT,
-    "conversation": 1
-    })
-        headers = {
-    'Content-Type': 'application/json',
-    }
-        r = requests.post('https://www.catgpt.dog/complete', data=pload, headers=headers)
-        txt = json.loads(r.text)['completion']
-        for k,v in replace.items():
-            txt = txt.replace(k,v)
-        res = {"Response":txt}
-    except:
-        res = {"Response":"Sorry, we're experiencing high traffic and our GPUs are currently overloaded. Please try again later. Thank you for your understanding"}
-    return res  
 
 @Tests.get("/test")
 def testapi():
