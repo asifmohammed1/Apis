@@ -307,3 +307,12 @@ async def shutdown_event():
 @app.get("/")
 async def root():
     return {"message": "Bot is running"}
+
+import gradio as gr
+def chatbot(message, history=[]):
+    res = gptrun(message)
+    return res
+
+gradio_app = gr.ChatInterface(fn=chatbot, type="messages", autofocus=False)
+
+app = gr.mount_gradio_app(app, gradio_app, path="/chat")
