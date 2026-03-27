@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5bd49c83-f0b8-4d5e-8964-5a38c931ffd9" name="Changes" comment="gradio chat req">
+    <list default="true" id="5bd49c83-f0b8-4d5e-8964-5a38c931ffd9" name="Changes" comment="gradio version degrad">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -121,7 +121,23 @@
       <option name="project" value="LOCAL" />
       <updated>1757753540201</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="gradio version update">
+      <option name="closed" value="true" />
+      <created>1757760111142</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1757760111142</updated>
+    </task>
+    <task id="LOCAL-00006" summary="gradio version degrad">
+      <option name="closed" value="true" />
+      <created>1757760323742</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1757760323742</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -129,6 +145,8 @@
     <MESSAGE value="openrouter apis" />
     <MESSAGE value="gradio chat" />
     <MESSAGE value="gradio chat req" />
-    <option name="LAST_COMMIT_MESSAGE" value="gradio chat req" />
+    <MESSAGE value="gradio version update" />
+    <MESSAGE value="gradio version degrad" />
+    <option name="LAST_COMMIT_MESSAGE" value="gradio version degrad" />
   </component>
 </project>
