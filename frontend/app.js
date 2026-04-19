@@ -996,12 +996,146 @@
     }
 
     // ======================================
+    // CHATBOT
+    // ======================================
+
+    const chatbotDOM = {
+        fab: $('#chatbot-fab'),
+        modal: $('#chatbot-modal'),
+        messages: $('#chatbot-messages'),
+        form: $('#chatbot-form'),
+        input: $('#chatbot-input'),
+        sendBtn: $('#chatbot-send-btn'),
+        clearBtn: $('#chatbot-clear-btn')
+    };
+
+    let chatOpen = false;
+    let chatSending = false;
+
+    function toggleChatbot() {
+        chatOpen = !chatOpen;
+        chatbotDOM.fab.classList.toggle('active', chatOpen);
+        if (chatOpen) {
+            chatbotDOM.modal.classList.remove('hidden');
+            chatbotDOM.modal.style.animation = 'chatOpen 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            chatbotDOM.input.focus();
+            scrollChat();
+        } else {
+            chatbotDOM.modal.classList.add('hidden');
+        }
+    }
+
+    function scrollChat() {
+        setTimeout(() => {
+            chatbotDOM.messages.scrollTop = chatbotDOM.messages.scrollHeight;
+        }, 50);
+    }
+
+    function getTimeStr() {
+        return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    }
+
+    function addChatBubble(text, type) {
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${type}`;
+        bubble.innerHTML = `
+            <div class="bubble-content">${escapeHtml(text)}</div>
+            <div class="bubble-time">${getTimeStr()}</div>
+        `;
+        chatbotDOM.messages.appendChild(bubble);
+        scrollChat();
+        return bubble;
+    }
+
+    function showTypingIndicator() {
+        const typing = document.createElement('div');
+        typing.className = 'chat-bubble bot';
+        typing.id = 'typing-bubble';
+        typing.innerHTML = `
+            <div class="bubble-content">
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        `;
+        chatbotDOM.messages.appendChild(typing);
+        scrollChat();
+    }
+
+    function removeTypingIndicator() {
+        const el = document.getElementById('typing-bubble');
+        if (el) el.remove();
+    }
+
+    async function sendChatMessage(message) {
+        if (!message.trim() || chatSending) return;
+
+        chatSending = true;
+        chatbotDOM.sendBtn.disabled = true;
+
+        // Add user bubble
+        addChatBubble(message, 'user');
+        chatbotDOM.input.value = '';
+
+        // Show typing
+        showTypingIndicator();
+
+        try {
+            const res = await fetch(`${API_BASE}/v1/OpenRouter`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ BOT: message })
+            });
+
+            removeTypingIndicator();
+
+            if (!res.ok) {
+                throw new Error('Failed to get response');
+            }
+
+            const data = await res.json();
+            const reply = data.Responses || 'Sorry, I could not process that.';
+            addChatBubble(reply, 'bot');
+        } catch (err) {
+            removeTypingIndicator();
+            addChatBubble('⚠️ Sorry, I\'m having trouble connecting. Please try again.', 'bot');
+        } finally {
+            chatSending = false;
+            chatbotDOM.sendBtn.disabled = false;
+            chatbotDOM.input.focus();
+        }
+    }
+
+    function clearChat() {
+        chatbotDOM.messages.innerHTML = '';
+        const welcome = document.createElement('div');
+        welcome.className = 'chat-bubble bot';
+        welcome.innerHTML = `
+            <div class="bubble-content">👋 Hi! I'm your AI assistant. Ask me anything!</div>
+            <div class="bubble-time">Just now</div>
+        `;
+        chatbotDOM.messages.appendChild(welcome);
+    }
+
+    function bindChatbotEvents() {
+        chatbotDOM.fab.addEventListener('click', toggleChatbot);
+
+        chatbotDOM.form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sendChatMessage(chatbotDOM.input.value);
+        });
+
+        chatbotDOM.clearBtn.addEventListener('click', clearChat);
+    }
+
+    // ======================================
     // INIT
     // ======================================
 
     function init() {
         initTheme();
         bindEvents();
+        bindChatbotEvents();
 
         if (state.token && state.user) {
             showApp();
