@@ -16,7 +16,8 @@ import joblib
 from typing import List
 import wordninja
 import json
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 # from requests_html import HTTPSession
 # from webdriver_manager.chrome import ChromeDriverManager
 # import google.generativeai as genai
@@ -34,7 +35,8 @@ def db_connect():
     user=url.username,
     password=url.password,
     host=url.hostname,
-    port=url.port
+    port=url.port,
+    sslmode='require'
     )
     cursor = conn.cursor()
     return cursor, conn
@@ -237,6 +239,16 @@ app.include_router(todoapis)
 app.include_router(loginapis)
 app.include_router(Tests)
 app.include_router(Fields)
+
+# Mount Todo frontend static files
+frontend_dir = os.path.join(os.path.dirname(__file__), "frontend")
+app.mount("/todo/static", StaticFiles(directory=frontend_dir), name="todo-static")
+
+@app.get("/todo", response_class=HTMLResponse)
+async def todo_frontend():
+    html_path = os.path.join(frontend_dir, "index.html")
+    with open(html_path, "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read())
 
 
 # Integrate with the OpenRouter

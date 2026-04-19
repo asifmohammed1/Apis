@@ -10,6 +10,7 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI()
 app.add_middleware(
@@ -47,9 +48,10 @@ def get_db():
     finally:
         db.close()
 
-SECRET_KEY = secrets.token_hex(32)
+# Use a fixed secret key so tokens survive server restarts
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "a1b2c3d4e5f6789risingstartodoappkey2024secure")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 120
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # db_dependency = Annotated[Session, Depends(get_db)]
@@ -104,34 +106,44 @@ async def login_for_access_token(req: LoginBase, db: Session = Depends(get_db)):
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": user.user_id, "username": user.username}
 
 
 @loginapis.post("/register")
 async def register_user(req: UserBase, db: Session = Depends(get_db)):
+    # Check if username already exists
+    existing = db.query(models.Userss).filter(models.Userss.username == req.username).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already taken")
     hashed_password = pwd_context.hash(req.password_hash)
     db_user = models.Userss(username=req.username,password_hash=hashed_password,email=req.email)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return {"user_id": db_user.user_id, "username": db_user.username, "email": db_user.email}
 
 
 # TODO API's
 
+# Helper: get user from token
+def get_user_from_token(token: str, db: Session):
+    user = db.query(models.Userss).filter(models.Userss.username == token).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
 
-# @todoapis.post("/create")
-# async def create_todo(req: TodoBase, db: Session = Depends(get_db)):
-#     user = db.query(models.Userss).filter(models.Userss.user_id == req.user_id).first()
-#     db_todo = models.Todo(task=req.task, user_id=req.user_id)
-#     db.add(db_todo)
-#     db.commit()
-#     db.refresh(db_todo)
-#     return db_todo
+
+@todoapis.get("/listall")
+async def list_all_todos(db: Session = Depends(get_db), token: str = Depends(verify_token)):
+    user = get_user_from_token(token, db)
+    result = db.query(models.Todo).filter(models.Todo.user_id == user.user_id).all()
+    return result
+
 
 @todoapis.get("/list")
 async def todo_details(todo_id: int, db: Session = Depends(get_db), token: str = Depends(verify_token)):
-    result = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == token).first()
+    user = get_user_from_token(token, db)
+    result = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == user.user_id).first()
     if result:
         return result
     else:
@@ -139,11 +151,8 @@ async def todo_details(todo_id: int, db: Session = Depends(get_db), token: str =
 
 @todoapis.post("/create")
 async def create_todo(req: TodoBase, db: Session = Depends(get_db), token: str = Depends(verify_token)):
-    user = db.query(models.Userss).filter(models.Userss.username == token).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    db_todo = models.Todo(task=req.task, user_id=user.id)
+    user = get_user_from_token(token, db)
+    db_todo = models.Todo(task=req.task, user_id=user.user_id)
     db.add(db_todo)
     db.commit()
     db.refresh(db_todo)
@@ -152,8 +161,9 @@ async def create_todo(req: TodoBase, db: Session = Depends(get_db), token: str =
 
 @todoapis.put("/edit/{todo_id}")
 async def edit_todo(todo_id: int, req: TodoBase, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+    user = get_user_from_token(token, db)
     # Check if the todo exists and belongs to the authenticated user
-    existing_todo = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == token).first()
+    existing_todo = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == user.user_id).first()
     if not existing_todo:
         raise HTTPException(status_code=404, detail="Todo not found")
 
@@ -167,8 +177,9 @@ async def edit_todo(todo_id: int, req: TodoBase, db: Session = Depends(get_db), 
 
 @todoapis.delete("/delete/{todo_id}")
 async def delete_todo(todo_id: int, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+    user = get_user_from_token(token, db)
     # Check if the todo exists and belongs to the authenticated user
-    existing_todo = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == token).first()
+    existing_todo = db.query(models.Todo).filter(models.Todo.id == todo_id, models.Todo.user_id == user.user_id).first()
     if not existing_todo:
         raise HTTPException(status_code=404, detail="Todo not found")
 

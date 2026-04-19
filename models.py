@@ -15,4 +15,4 @@ class Todo(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     task = Column(String, index=True)
-    user_id = Column(Integer, ForeignKey("Users.id"))
+    user_id = Column(Integer, ForeignKey("users.user_id"))
