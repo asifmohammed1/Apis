@@ -309,10 +309,18 @@ async def root():
     return {"message": "Bot is running"}
 
 import gradio as gr
-def chatbot(message, history=[]):
-    res = gptrun(message)
-    return res
 
-gradio_app = gr.ChatInterface(fn=chatbot, type="messages", autofocus=False)
+def chatbot(message, history):
+    history = history or []
+    res = gptrun(message)
+    history.append((message, res))
+    return history, history
+
+with gr.Blocks() as gradio_app:
+    gr.Markdown("## 💬 Rising Star Chatbot")
+    chatbot_ui = gr.Chatbot()
+    msg = gr.Textbox(placeholder="Type a message...", show_label=False)
+    state = gr.State([])
+    msg.submit(chatbot, inputs=[msg, state], outputs=[chatbot_ui, state])
 
 app = gr.mount_gradio_app(app, gradio_app, path="/chat")
