@@ -29,51 +29,44 @@
         <button id="landing-get-started-nav" class="btn btn-primary btn-sm">Get Started</button>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <div class="hero-badge">✨ AI-Powered Task Manager</div>
-            <h1 class="hero-title">Rising Star <span class="gradient-text">To Do</span></h1>
-            <p class="hero-subtitle">To Do gives you focus, from work to play. Organize tasks, set priorities, and let AI help you stay productive — all in one beautiful app.</p>
-            <button id="hero-get-started" class="btn btn-primary btn-lg hero-cta">
-                <span>Get Started — It's Free</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
+    <!-- Hero Section (Full Screen Carousel) -->
+    <section class="hero-fullscreen">
+        <div class="carousel-track" id="carousel-track">
+            <!-- Slide 1 -->
+            <div class="carousel-slide slide-fullscreen" style="background-image: url('/todo/static/assets/carousel_ai_chat_1777123986266.png')">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">✨ AI-Powered Task Manager</div>
+                    <h1 class="hero-title">Create with <span class="gradient-text">AI Chat</span></h1>
+                    <p class="hero-subtitle">Just type "Add task: Buy groceries by tomorrow" and your todo is created instantly.</p>
+                    <button class="btn btn-primary btn-lg hero-cta hero-get-started">Get Started — It's Free</button>
+                </div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="carousel-slide slide-fullscreen" style="background-image: url('/todo/static/assets/carousel_organize_1777124001467.png')">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">🎯 Organize Everything</div>
+                    <h1 class="hero-title">Organize & <span class="gradient-text">Prioritize</span></h1>
+                    <p class="hero-subtitle">Set priorities, due dates, add subtasks, and drag-and-drop to reorder. Your workflow, your way.</p>
+                    <button class="btn btn-primary btn-lg hero-cta hero-get-started">Get Started — It's Free</button>
+                </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="carousel-slide slide-fullscreen" style="background-image: url('/todo/static/assets/carousel_progress_1777124024095.png')">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">📊 Stay on Track</div>
+                    <h1 class="hero-title">Track <span class="gradient-text">Progress</span></h1>
+                    <p class="hero-subtitle">Real-time stats, completion tracking, and smart filters. See how productive you are at a glance.</p>
+                    <button class="btn btn-primary btn-lg hero-cta hero-get-started">Get Started — It's Free</button>
+                </div>
+            </div>
         </div>
-
-        <!-- Carousel -->
-        <div class="hero-carousel">
-            <div class="carousel-track" id="carousel-track">
-                <div class="carousel-slide">
-                    <div class="slide-card slide-card--create">
-                        <div class="slide-icon">💬</div>
-                        <h3>Create with AI Chat</h3>
-                        <p>Just type <em>"Add task: Buy groceries by tomorrow"</em> and your todo is created instantly with smart date parsing.</p>
-                        <div class="slide-mock"><span class="mock-tag">AI Powered</span></div>
-                    </div>
-                </div>
-                <div class="carousel-slide">
-                    <div class="slide-card slide-card--organize">
-                        <div class="slide-icon">🎯</div>
-                        <h3>Organize & Prioritize</h3>
-                        <p>Set priorities, due dates, add subtasks, and drag-and-drop to reorder. Your workflow, your way.</p>
-                        <div class="slide-mock"><span class="mock-tag tag-high">High</span><span class="mock-tag tag-med">Medium</span><span class="mock-tag tag-low">Low</span></div>
-                    </div>
-                </div>
-                <div class="carousel-slide">
-                    <div class="slide-card slide-card--track">
-                        <div class="slide-icon">📊</div>
-                        <h3>Track Progress</h3>
-                        <p>Real-time stats, completion tracking, and smart filtering. See how productive you are at a glance.</p>
-                        <div class="slide-mock"><div class="mock-progress"><div class="mock-bar" style="width:72%"></div></div><span class="mock-pct">72%</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-dots">
-                <button class="dot active" data-slide="0"></button>
-                <button class="dot" data-slide="1"></button>
-                <button class="dot" data-slide="2"></button>
-            </div>
+        <div class="carousel-dots carousel-dots-fullscreen">
+            <button class="dot active" data-slide="0"></button>
+            <button class="dot" data-slide="1"></button>
+            <button class="dot" data-slide="2"></button>
         </div>
     </section>
 
@@ -82,35 +75,35 @@
         <h2 class="section-title">What Makes Us <span class="gradient-text">Different</span></h2>
         <p class="section-subtitle">Packed with features to supercharge your productivity</p>
         <div class="features-grid">
-            <div class="feature-box"><div class="feature-icon" style="--fc:#6C63FF">🤖</div><h4>AI Todo Creation</h4><p>Create tasks using natural language via the built-in AI chatbot</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#3B82F6">📅</div><h4>Smart Date Parsing</h4><p>Say "by tomorrow" or "Jan 15" — dates are parsed automatically</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#10B981">🔄</div><h4>Real-time Sync</h4><p>Your tasks sync with the cloud instantly across sessions</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#F59E0B">⚡</div><h4>Priority System</h4><p>High, Medium, Low — organize and focus on what matters most</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#EF4444">🔍</div><h4>Search & Filter</h4><p>Find any task instantly with real-time search and smart filters</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#8B5CF6">🌙</div><h4>Dark Mode</h4><p>Beautiful dark theme for comfortable viewing day and night</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#EC4899">✋</div><h4>Drag & Drop</h4><p>Reorder your tasks with intuitive drag-and-drop interactions</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#14B8A6">📋</div><h4>Subtasks</h4><p>Break tasks into smaller steps and track completion progress</p></div>
-            <div class="feature-box"><div class="feature-icon" style="--fc:#F97316">🔒</div><h4>Secure Auth</h4><p>JWT-based authentication keeps your data safe and private</p></div>
+            <div class="feature-box" data-modal="true" data-title="AI Todo Creation" data-icon="🤖" data-desc="Our advanced AI can understand your natural language input. Just talk to the chatbot normally, and it will interpret your request and convert it into a structured task with all necessary metadata."><div class="feature-icon" style="--fc:#6C63FF">🤖</div><h4>AI Todo Creation</h4><p>Create tasks using natural language via the built-in AI chatbot</p></div>
+            <div class="feature-box" data-modal="true" data-title="Smart Date Parsing" data-icon="📅" data-desc="Don't waste time clicking through calendars. Type phrases like 'by tomorrow', 'next week', or 'Jan 15' and our engine automatically calculates and sets the correct due dates."><div class="feature-icon" style="--fc:#3B82F6">📅</div><h4>Smart Date Parsing</h4><p>Say "by tomorrow" or "Jan 15" — dates are parsed automatically</p></div>
+            <div class="feature-box" data-modal="true" data-title="Real-time Sync" data-icon="🔄" data-desc="Never lose your data. With our PostgreSQL-backed API, every change you make is instantly saved and synchronized across all your devices seamlessly."><div class="feature-icon" style="--fc:#10B981">🔄</div><h4>Real-time Sync</h4><p>Your tasks sync with the cloud instantly across sessions</p></div>
+            <div class="feature-box" data-modal="true" data-title="Priority System" data-icon="⚡" data-desc="Filter the noise and focus on what matters. Use our color-coded priority system (High, Medium, Low) to structure your day effectively."><div class="feature-icon" style="--fc:#F59E0B">⚡</div><h4>Priority System</h4><p>High, Medium, Low — organize and focus on what matters most</p></div>
+            <div class="feature-box" data-modal="true" data-title="Search & Filter" data-icon="🔍" data-desc="Instantly find any task with lightning-fast real-time search. You can also filter tasks by priority or status to get a clear view of your goals."><div class="feature-icon" style="--fc:#EF4444">🔍</div><h4>Search & Filter</h4><p>Find any task instantly with real-time search and smart filters</p></div>
+            <div class="feature-box" data-modal="true" data-title="Dark Mode" data-icon="🌙" data-desc="We love your eyes. Toggle between a crisp light mode and a beautiful, carefully crafted dark mode for comfortable productivity at any hour."><div class="feature-icon" style="--fc:#8B5CF6">🌙</div><h4>Dark Mode</h4><p>Beautiful dark theme for comfortable viewing day and night</p></div>
+            <div class="feature-box" data-modal="true" data-title="Drag & Drop" data-icon="✋" data-desc="Easily re-prioritize your day. Just click, hold, and drag tasks into your preferred order with smooth, satisfying animations."><div class="feature-icon" style="--fc:#EC4899">✋</div><h4>Drag & Drop</h4><p>Reorder your tasks with intuitive drag-and-drop interactions</p></div>
+            <div class="feature-box" data-modal="true" data-title="Subtasks" data-icon="📋" data-desc="Big projects require small steps. Break down your primary tasks into manageable subtasks, track them individually, and stay motivated."><div class="feature-icon" style="--fc:#14B8A6">📋</div><h4>Subtasks</h4><p>Break tasks into smaller steps and track completion progress</p></div>
+            <div class="feature-box" data-modal="true" data-title="Secure Auth" data-icon="🔒" data-desc="Your data is strictly yours. We employ industry-standard JWT authentication and secure database design to ensure complete privacy."><div class="feature-icon" style="--fc:#F97316">🔒</div><h4>Secure Auth</h4><p>JWT-based authentication keeps your data safe and private</p></div>
         </div>
     </section>
 
     <!-- AI Assistant Section -->
     <section class="landing-section ai-section">
-        <h2 class="section-title">Powered by <span class="gradient-text">AI</span></h2>
+        <h2 class="section-title">Powered by <span class="gradient-text">NVIDIA AI</span></h2>
         <p class="section-subtitle">Your intelligent assistant for effortless task management</p>
         <div class="ai-cards">
-            <div class="ai-card">
+            <div class="ai-card" data-modal="true" data-title="AI Assistant" data-icon="🧠" data-desc="Chat naturally with the bot to get insights, tips, or have it automatically manage your task list behind the scenes.">
                 <div class="ai-card-icon">🧠</div>
                 <h4>AI Assistant</h4>
-                <p>Rising Star AI chatbot understands natural language to create, manage, and organize your todos seamlessly.</p>
+                <p>Chatbot understands natural language to create, manage, and organize your todos seamlessly.</p>
             </div>
-            <div class="ai-card ai-card--model">
+            <div class="ai-card ai-card--model" data-modal="true" data-title="NVIDIA inference" data-icon="⚙️" data-desc="Leveraging NVIDIA's high-speed inference APIs to run moonshotai/kimi-k2-instruct, delivering incredibly fast and accurate LLM responses.">
                 <div class="ai-card-icon">⚙️</div>
                 <h4>Model</h4>
-                <div class="model-name">Meta Llama 3.3 70B Instruct</div>
-                <p>Powered via <strong>OpenRouter API</strong> — a state-of-the-art open-source LLM for intelligent responses.</p>
+                <div class="model-name">moonshotai/kimi-k2-instruct</div>
+                <p>Powered via <strong>NVIDIA API</strong> — delivering cutting-edge AI processing speed and intelligence.</p>
             </div>
-            <div class="ai-card">
+            <div class="ai-card" data-modal="true" data-title="Smart Parsing" data-icon="💡" data-desc="Regex and LLM combined: We extract intent, titles, and dates seamlessly from conversational text.">
                 <div class="ai-card-icon">💡</div>
                 <h4>Smart Parsing</h4>
                 <p>Extracts task titles, due dates, and context from plain text — no forms needed, just type naturally.</p>
@@ -123,12 +116,12 @@
         <h2 class="section-title">Built With <span class="gradient-text">Modern Tech</span></h2>
         <p class="section-subtitle">Enterprise-grade stack, developer-friendly architecture</p>
         <div class="tech-grid">
-            <div class="tech-box"><div class="tech-logo">⚡</div><h4>FastAPI</h4><p>High-performance Python backend</p></div>
-            <div class="tech-box"><div class="tech-logo">🐘</div><h4>PostgreSQL</h4><p>Reliable cloud database (Neon)</p></div>
-            <div class="tech-box"><div class="tech-logo">🔗</div><h4>SQLAlchemy</h4><p>Powerful Python ORM layer</p></div>
-            <div class="tech-box"><div class="tech-logo">🟨</div><h4>JavaScript</h4><p>Vanilla JS, zero-dependency frontend</p></div>
-            <div class="tech-box"><div class="tech-logo">🤖</div><h4>OpenRouter AI</h4><p>LLM gateway for AI features</p></div>
-            <div class="tech-box"><div class="tech-logo">🚀</div><h4>Vercel / Render</h4><p>Serverless & container deployment</p></div>
+            <div class="tech-box" data-modal="true" data-title="FastAPI" data-icon="⚡" data-desc="The backend is powered by FastAPI, an incredibly fast web framework for Python 3.8+ based on standard Python type hints."><div class="tech-logo">⚡</div><h4>FastAPI</h4><p>High-performance Python backend</p></div>
+            <div class="tech-box" data-modal="true" data-title="PostgreSQL" data-icon="🐘" data-desc="Data is securely stored in a scalable PostgreSQL database hosted on Neon, providing robust relational data management."><div class="tech-logo">🐘</div><h4>PostgreSQL</h4><p>Reliable cloud database (Neon)</p></div>
+            <div class="tech-box" data-modal="true" data-title="SQLAlchemy" data-icon="🔗" data-desc="Database interactions are handled smoothly using SQLAlchemy, the premier SQL toolkit and Object Relational Mapper for Python."><div class="tech-logo">🔗</div><h4>SQLAlchemy</h4><p>Powerful Python ORM layer</p></div>
+            <div class="tech-box" data-modal="true" data-title="Vanilla JS" data-icon="🟨" data-desc="The frontend is built purely with Vanilla JavaScript and CSS, ensuring maximum performance without the overhead of heavy frameworks."><div class="tech-logo">🟨</div><h4>JavaScript</h4><p>Vanilla JS, zero-dependency frontend</p></div>
+            <div class="tech-box" data-modal="true" data-title="NVIDIA API" data-icon="🤖" data-desc="We use NVIDIA API endpoints to execute state-of-the-art language models with minimal latency."><div class="tech-logo">🤖</div><h4>NVIDIA AI</h4><p>LLM gateway for AI features</p></div>
+            <div class="tech-box" data-modal="true" data-title="Vercel & Render" data-icon="🚀" data-desc="Frontend and backend are containerized and deployed across top-tier serverless platforms like Vercel and Render."><div class="tech-logo">🚀</div><h4>Deployment</h4><p>Serverless & containerized</p></div>
         </div>
     </section>
 
@@ -136,11 +129,23 @@
     <section class="landing-footer-cta">
         <h2>Ready to Get Things Done?</h2>
         <p>Join Rising Star Todo and transform how you manage tasks.</p>
-        <button id="footer-get-started" class="btn btn-primary btn-lg hero-cta">
+        <button id="footer-get-started" class="btn btn-primary btn-lg hero-cta hero-get-started">
             <span>Get Started Now</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
     </section>
+</div>
+
+<!-- ==================== GENERIC FEATURE MODAL ==================== -->
+<div id="info-modal" class="modal-overlay hidden" style="z-index: 200;">
+    <div class="auth-modal-card glass-card" style="max-width: 400px; text-align: center;" role="dialog">
+        <button id="info-modal-close" class="icon-btn auth-modal-close" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div id="info-modal-icon" style="font-size: 3rem; margin-bottom: 16px;"></div>
+        <h2 id="info-modal-title" style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;"></h2>
+        <p id="info-modal-desc" style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;"></p>
+    </div>
 </div>
 
 <!-- ==================== AUTH MODAL ==================== -->
@@ -152,8 +157,8 @@
         <div id="login-screen" class="auth-screen">
             <div class="auth-header">
                 <div class="auth-logo"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="14" fill="url(#logoGrad)"/><path d="M14 24L21 31L34 18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="logoGrad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs></svg></div>
-                <h1>Welcome Back - Rising Star To Do</h1>
-                <p class="auth-subtitle">Sign in to continue to Rising Star Todo - To Do gives you focus, from work to play.</p>
+                <h1>Rising Star To Do</h1>
+                <p class="auth-subtitle">To Do gives you focus, from work to play.</p>
             </div>
             <form id="login-form" class="auth-form" autocomplete="off">
                 <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><input type="text" id="login-username" placeholder="Username" required><label>Username</label></div>

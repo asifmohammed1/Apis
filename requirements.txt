@@ -42,5 +42,5 @@ scikit-learn
 scipy
 pyTelegramBotAPI
 aiohttp
-gradio>=4.0.0
+setuptools
 aiofiles

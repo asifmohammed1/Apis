@@ -163,25 +163,25 @@ def list_of_models():
     ids = [item["id"] for item in res if "free" in item.get("id", "").lower()]
     return {"Model Names":ids}
 
-@chatgpt.post("/OpenRouter")
+@chatgpt.post("/Nvidia")
 def openrouter_gpt(req: GptInput):
-    cursor, conn = db_connect()
-    cursor.execute("SELECT key FROM keys WHERE name = %s", ("openrouter",))
-    result = cursor.fetchone()
-    OpenRouterAPI = result[0]
     msg = req.BOT + " **one line respond**"
-    url = "https://openrouter.ai/api/v1/chat/completions"
+    url = "https://integrate.api.nvidia.com/v1/chat/completions"
     payload = {
-        "model": "meta-llama/llama-3.3-70b-instruct:free",
+        "model": "moonshotai/kimi-k2-instruct",
         "messages": [
             {
                 "role": "user",
                 "content": msg
             }
-        ]
+        ],
+        "temperature": 0.6,
+        "top_p": 0.9,
+        "max_tokens": 4096,
+        "stream": False
     }
     headers = {
-        "Authorization": f"Bearer {OpenRouterAPI}",
+        "Authorization": "Bearer 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",
         "Content-Type": "application/json"
     }
     response = requests.post(url, json=payload, headers=headers)
@@ -261,23 +261,23 @@ app.mount("/todo/static", StaticFiles(directory=frontend_dir), name="todo-static
 
 
 def gptrun(message):
-    cursor, conn = db_connect()
-    cursor.execute("SELECT key FROM keys WHERE name = %s", ("openrouter",))
-    result = cursor.fetchone()
-    OpenRouterAPI = result[0]
     msg = message + " **one line respond**"
-    url = "https://openrouter.ai/api/v1/chat/completions"
+    url = "https://integrate.api.nvidia.com/v1/chat/completions"
     payload = {
-        "model": "meta-llama/llama-3.3-70b-instruct:free",
+        "model": "moonshotai/kimi-k2-instruct",
         "messages": [
             {
                 "role": "user",
                 "content": msg
             }
-        ]
+        ],
+        "temperature": 0.6,
+        "top_p": 0.9,
+        "max_tokens": 4096,
+        "stream": False
     }
     headers = {
-        "Authorization": f"Bearer {OpenRouterAPI}",
+        "Authorization": "Bearer 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",
         "Content-Type": "application/json"
     }
     response = requests.post(url, json=payload, headers=headers)

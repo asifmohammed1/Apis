@@ -101,7 +101,14 @@
         addSubtaskBtn: $('#add-subtask-btn'),
 
         // Toast
-        toastContainer: $('#toast-container')
+        toastContainer: $('#toast-container'),
+
+        // Info Modal
+        infoModal: $('#info-modal'),
+        infoModalClose: $('#info-modal-close'),
+        infoModalIcon: $('#info-modal-icon'),
+        infoModalTitle: $('#info-modal-title'),
+        infoModalDesc: $('#info-modal-desc')
     };
 
     // ======================================
@@ -260,6 +267,17 @@
 
     function closeAuthModal() {
         DOM.authModal.classList.add('hidden');
+    }
+
+    function openInfoModal(title, icon, desc) {
+        DOM.infoModalIcon.textContent = icon;
+        DOM.infoModalTitle.textContent = title;
+        DOM.infoModalDesc.textContent = desc;
+        DOM.infoModal.classList.remove('hidden');
+    }
+
+    function closeInfoModal() {
+        DOM.infoModal.classList.add('hidden');
     }
 
     function updateUserDisplay() {
@@ -981,10 +999,20 @@
         DOM.authModal.addEventListener('click', (e) => { if (e.target === DOM.authModal) closeAuthModal(); });
 
         // Get Started buttons
-        ['#hero-get-started', '#landing-get-started-nav', '#footer-get-started'].forEach(sel => {
-            const btn = $(sel);
-            if (btn) btn.addEventListener('click', openAuthModal);
+        ['#hero-get-started', '.hero-get-started', '#landing-get-started-nav', '#footer-get-started'].forEach(sel => {
+            document.querySelectorAll(sel).forEach(btn => {
+                btn.addEventListener('click', openAuthModal);
+            });
         });
+
+        // Info Modal (Feature boxes)
+        $$('[data-modal="true"]').forEach(box => {
+            box.addEventListener('click', () => {
+                openInfoModal(box.dataset.title, box.dataset.icon, box.dataset.desc);
+            });
+        });
+        DOM.infoModalClose.addEventListener('click', closeInfoModal);
+        DOM.infoModal.addEventListener('click', (e) => { if (e.target === DOM.infoModal) closeInfoModal(); });
 
         // Sidebar
         DOM.menuToggleBtn.addEventListener('click', openSidebar);
@@ -1035,6 +1063,7 @@
                 closeModal();
                 closeSidebar();
                 closeAuthModal();
+                closeInfoModal();
             }
             if (e.key === 'n' && !e.ctrlKey && !e.metaKey && !isInputFocused()) {
                 e.preventDefault();
@@ -1250,10 +1279,10 @@
                 addChatBubble('⚠️ Sorry, I couldn\'t create that todo. Please try again.', 'bot');
             }
         } else {
-            // Regular AI chat — send to OpenRouter
+            // Regular AI chat — send to Nvidia
             showTypingIndicator();
             try {
-                const res = await fetch(`${API_BASE}/v1/OpenRouter`, {
+                const res = await fetch(`${API_BASE}/v1/Nvidia`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ BOT: message })
