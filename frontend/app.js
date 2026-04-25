@@ -1279,10 +1279,10 @@
                 addChatBubble('⚠️ Sorry, I couldn\'t create that todo. Please try again.', 'bot');
             }
         } else {
-            // Regular AI chat — send to Nvidia
+            // Regular AI chat — send to Nivdia
             showTypingIndicator();
             try {
-                const res = await fetch(`${API_BASE}/v1/Nvidia`, {
+                const res = await fetch(`${API_BASE}/v1/Nivdia`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ BOT: message })

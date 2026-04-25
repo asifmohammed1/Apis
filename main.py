@@ -163,7 +163,7 @@ def list_of_models():
     ids = [item["id"] for item in res if "free" in item.get("id", "").lower()]
     return {"Model Names":ids}
 
-@chatgpt.post("/Nvidia")
+@chatgpt.post("/Nivdia")
 def openrouter_gpt(req: GptInput):
     msg = req.BOT + " **one line respond**"
     url = "https://integrate.api.nvidia.com/v1/chat/completions"

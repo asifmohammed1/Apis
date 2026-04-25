@@ -3,47 +3,47 @@
    ====================================== */
 
 /* ---------- CSS Custom Properties ---------- */
-:root {
+:root, [data-theme="dark"], [data-theme="light"] {
     /* Core palette */
     --primary: #6C63FF;
     --primary-hover: #5A52E0;
-    --primary-ghost: rgba(108, 99, 255, 0.08);
-    --primary-light: rgba(108, 99, 255, 0.12);
+    --primary-ghost: rgba(108, 99, 255, 0.15);
+    --primary-light: rgba(108, 99, 255, 0.25);
     --secondary: #3B82F6;
     --success: #10B981;
     --warning: #F59E0B;
     --danger: #EF4444;
     --purple: #8B5CF6;
 
-    /* Light theme */
-    --bg-body: #F0F2F5;
-    --bg-sidebar: #FFFFFF;
-    --bg-card: #FFFFFF;
-    --bg-input: #F5F6F8;
-    --bg-hover: #F0F2F5;
-    --bg-modal-overlay: rgba(15, 23, 42, 0.45);
-    --bg-stat: #FFFFFF;
+    /* Glass Dark Theme for EVERYTHING - Less transparent for better readability */
+    --bg-body: transparent;
+    --bg-sidebar: rgba(15, 23, 42, 0.8);
+    --bg-card: rgba(15, 23, 42, 0.7);
+    --bg-input: rgba(15, 23, 42, 0.5);
+    --bg-hover: rgba(255, 255, 255, 0.08);
+    --bg-modal-overlay: rgba(0, 0, 0, 0.75);
+    --bg-stat: rgba(15, 23, 42, 0.7);
 
-    --text-primary: #1E293B;
-    --text-secondary: #64748B;
-    --text-tertiary: #94A3B8;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.75);
+    --text-tertiary: rgba(255, 255, 255, 0.5);
     --text-on-primary: #FFFFFF;
 
-    --border-color: #E2E8F0;
-    --border-light: #F1F5F9;
+    --border-color: rgba(255, 255, 255, 0.12);
+    --border-light: rgba(255, 255, 255, 0.05);
 
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
-    --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
-    --shadow-xl: 0 20px 60px rgba(0,0,0,0.12);
-    --shadow-glow: 0 0 20px rgba(108, 99, 255, 0.15);
-    --shadow-card-hover: 0 8px 30px rgba(0,0,0,0.08);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+    --shadow-xl: 0 20px 60px rgba(0,0,0,0.6);
+    --shadow-glow: 0 0 20px rgba(108, 99, 255, 0.25);
+    --shadow-card-hover: 0 8px 30px rgba(0,0,0,0.5);
 
     /* Empty state */
-    --empty-bg: #E8E6FF;
-    --empty-card: #FFFFFF;
-    --empty-border: #D4D0FF;
-    --empty-line: #C4BFFF;
+    --empty-bg: rgba(45, 39, 99, 0.4);
+    --empty-card: rgba(255, 255, 255, 0.05);
+    --empty-border: rgba(108, 99, 255, 0.3);
+    --empty-line: rgba(108, 99, 255, 0.5);
 
     /* Sidebar */
     --sidebar-width: 280px;
@@ -59,35 +59,6 @@
     --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ---------- Dark Theme ---------- */
-[data-theme="dark"] {
-    --bg-body: #0F172A;
-    --bg-sidebar: #1E293B;
-    --bg-card: #1E293B;
-    --bg-input: #334155;
-    --bg-hover: #334155;
-    --bg-modal-overlay: rgba(0, 0, 0, 0.6);
-    --bg-stat: #1E293B;
-
-    --text-primary: #F1F5F9;
-    --text-secondary: #94A3B8;
-    --text-tertiary: #64748B;
-
-    --border-color: #334155;
-    --border-light: #1E293B;
-
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
-    --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
-    --shadow-xl: 0 20px 60px rgba(0,0,0,0.5);
-    --shadow-card-hover: 0 8px 30px rgba(0,0,0,0.3);
-
-    --empty-bg: #2D2763;
-    --empty-card: #1E293B;
-    --empty-border: #4338CA;
-    --empty-line: #6366F1;
 }
 
 /* ---------- Global Reset ---------- */
@@ -239,12 +210,12 @@ img { max-width: 100%; }
 .landing-nav {
     display: flex; align-items: center; justify-content: space-between;
     padding: 18px 40px; position: sticky; top: 0; z-index: 50;
-    background: color-mix(in srgb, var(--bg-body) 85%, transparent);
+    background: rgba(15, 23, 42, 0.4);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .landing-nav-logo { display: flex; align-items: center; gap: 10px; }
-.landing-nav-logo span { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); }
+.landing-nav-logo span { font-size: 1.15rem; font-weight: 700; color: #fff; }
 .btn-sm { padding: 8px 18px; font-size: 0.85rem; }
 
 /* ---- Hero Full Screen Carousel ---- */
@@ -1543,3 +1514,97 @@ img { max-width: 100%; }
     margin-top: 4px;
 }
 
+/* ======================================
+   AI-GENERATED BACKGROUNDS
+   ====================================== */
+
+/* Main App & Body Background */
+body {
+    background-image: url('/todo/static/assets/bg_app_ai_v4_1777125746891.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: scroll !important;
+}
+body[data-theme="dark"] {
+    background-image: url('/todo/static/assets/bg_app_ai_v4_1777125746891.png') !important;
+}
+
+/* Make sure the main content is readable */
+#app-container {
+    background: transparent;
+}
+.sidebar {
+    background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.9)), url('/todo/static/assets/bg_sidebar_v2_1777126012965.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    backdrop-filter: none !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+[data-theme="light"] .sidebar {
+    background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.9)), url('/todo/static/assets/bg_sidebar_v2_1777126012965.png') !important;
+}
+
+/* Chatbot Modal Background */
+.chatbot-modal {
+    background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.95)) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+}
+
+/* Auth Modal Background */
+#auth-modal .auth-modal-card {
+    background-image: linear-gradient(to bottom, rgba(15,23,42,0.6), rgba(15,23,42,0.9)), url('/todo/static/assets/bg_login_modal_v2_1777125875869.png');
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+#auth-modal .auth-header h1,
+#auth-modal .auth-subtitle {
+    color: #fff;
+}
+
+/* Generic Modals (Info & Task Modals) Background */
+#info-modal .auth-modal-card,
+#task-modal .modal-content {
+    background-image: linear-gradient(to bottom, rgba(15,23,42,0.7), rgba(15,23,42,0.95)), url('/todo/static/assets/bg_generic_modal_v2_1777125853181.png');
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+#info-modal h2, #info-modal p,
+#task-modal .modal-title, #task-modal label {
+    color: #fff !important;
+}
+
+/* Modal Input & Text Overrides */
+#auth-modal input, #task-modal input, #task-modal textarea, #task-modal select {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+#auth-modal input::placeholder, #task-modal input::placeholder, #task-modal textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+#auth-modal .input-icon {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+#auth-modal label {
+    color: rgba(255, 255, 255, 0.7) !important;
+    background: transparent !important;
+}
+#auth-modal input:focus + label, #auth-modal input:not(:placeholder-shown) + label {
+    background: rgba(15, 23, 42, 0.9) !important;
+    color: #fff !important;
+}
+#auth-modal .auth-footer, #auth-modal .auth-footer a, #auth-modal .auth-footer span {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+#task-modal .modal-close-btn, #info-modal-close, #auth-modal-close {
+    color: #fff !important;
+}
+#task-modal .subtask-item {
+    color: #fff !important;
+}
