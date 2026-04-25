@@ -15,6 +15,7 @@ import time
 import requests
 import json
 from todo import *
+from todo import app
 import joblib
 from typing import List
 import wordninja
@@ -325,14 +326,4 @@ I am excited to have a conversation with you! What can I do for you!\
 async def root():
     return {"message": "Bot is running"}
 
-if not IS_VERCEL:
-    import gradio as gr
-
-    def chatbot_fn(message, history):
-        res = gptrun(message)
-        return res
-
-    gradio_app = gr.ChatInterface(fn=chatbot_fn, title="💬 Rising Star Chatbot")
-
-    app = gr.mount_gradio_app(app, gradio_app, path="/chat")
 

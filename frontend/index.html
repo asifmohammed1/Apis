@@ -8,101 +8,178 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/todo/static/style.css?v=2">
+    <link rel="stylesheet" href="/todo/static/style.css?v=4">
 </head>
 <body>
 
-<!-- ==================== AUTH SCREENS ==================== -->
-<div id="auth-container" class="auth-container">
-    <div class="auth-bg-shapes">
+<!-- ==================== LANDING PAGE ==================== -->
+<div id="landing-page" class="landing-page">
+    <div class="landing-bg-shapes">
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
         <div class="shape shape-3"></div>
     </div>
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="auth-card glass-card">
-        <div class="auth-header">
-            <div class="auth-logo">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                    <rect width="48" height="48" rx="14" fill="url(#logoGrad)"/>
-                    <path d="M14 24L21 31L34 18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs>
-                </svg>
-            </div>
-            <h1>Welcome Back</h1>
-            <p class="auth-subtitle">Sign in to continue to Rising Star Todo</p>
+    <!-- Navbar -->
+    <nav class="landing-nav">
+        <div class="landing-nav-logo">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="14" fill="url(#lnGrad)"/><path d="M14 24L21 31L34 18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="lnGrad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs></svg>
+            <span>Rising Star</span>
         </div>
-        <form id="login-form" class="auth-form" autocomplete="off">
-            <div class="input-group">
-                <div class="input-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <input type="text" id="login-username" placeholder="Username" required>
-                <label>Username</label>
-            </div>
-            <div class="input-group">
-                <div class="input-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <input type="password" id="login-password" placeholder="Password" required>
-                <label>Password</label>
-            </div>
-            <div id="login-error" class="auth-error hidden"></div>
-            <button type="submit" id="login-btn" class="btn btn-primary btn-full">
-                <span class="btn-text">Sign In</span>
-                <div class="btn-loader hidden"><div class="spinner"></div></div>
-            </button>
-        </form>
-        <div class="auth-footer">
-            <p>Don't have an account? <a href="#" id="show-signup">Create one</a></p>
-        </div>
-    </div>
+        <button id="landing-get-started-nav" class="btn btn-primary btn-sm">Get Started</button>
+    </nav>
 
-    <!-- Signup Screen -->
-    <div id="signup-screen" class="auth-card glass-card hidden">
-        <div class="auth-header">
-            <div class="auth-logo">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                    <rect width="48" height="48" rx="14" fill="url(#logoGrad2)"/>
-                    <path d="M24 14v20M14 24h20" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
-                    <defs><linearGradient id="logoGrad2" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs>
-                </svg>
-            </div>
-            <h1>Create Account</h1>
-            <p class="auth-subtitle">Get started with Rising Star Todo</p>
-        </div>
-        <form id="signup-form" class="auth-form" autocomplete="off">
-            <div class="input-group">
-                <div class="input-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <input type="text" id="signup-username" placeholder="Username" required>
-                <label>Username</label>
-            </div>
-            <div class="input-group">
-                <div class="input-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                </div>
-                <input type="email" id="signup-email" placeholder="Email" required>
-                <label>Email</label>
-            </div>
-            <div class="input-group">
-                <div class="input-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <input type="password" id="signup-password" placeholder="Password" required minlength="6">
-                <label>Password</label>
-            </div>
-            <div id="signup-error" class="auth-error hidden"></div>
-            <div id="signup-success" class="auth-success hidden"></div>
-            <button type="submit" id="signup-btn" class="btn btn-primary btn-full">
-                <span class="btn-text">Create Account</span>
-                <div class="btn-loader hidden"><div class="spinner"></div></div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge">✨ AI-Powered Task Manager</div>
+            <h1 class="hero-title">Rising Star <span class="gradient-text">To Do</span></h1>
+            <p class="hero-subtitle">To Do gives you focus, from work to play. Organize tasks, set priorities, and let AI help you stay productive — all in one beautiful app.</p>
+            <button id="hero-get-started" class="btn btn-primary btn-lg hero-cta">
+                <span>Get Started — It's Free</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
-        </form>
-        <div class="auth-footer">
-            <p>Already have an account? <a href="#" id="show-login">Sign in</a></p>
+        </div>
+
+        <!-- Carousel -->
+        <div class="hero-carousel">
+            <div class="carousel-track" id="carousel-track">
+                <div class="carousel-slide">
+                    <div class="slide-card slide-card--create">
+                        <div class="slide-icon">💬</div>
+                        <h3>Create with AI Chat</h3>
+                        <p>Just type <em>"Add task: Buy groceries by tomorrow"</em> and your todo is created instantly with smart date parsing.</p>
+                        <div class="slide-mock"><span class="mock-tag">AI Powered</span></div>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="slide-card slide-card--organize">
+                        <div class="slide-icon">🎯</div>
+                        <h3>Organize & Prioritize</h3>
+                        <p>Set priorities, due dates, add subtasks, and drag-and-drop to reorder. Your workflow, your way.</p>
+                        <div class="slide-mock"><span class="mock-tag tag-high">High</span><span class="mock-tag tag-med">Medium</span><span class="mock-tag tag-low">Low</span></div>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="slide-card slide-card--track">
+                        <div class="slide-icon">📊</div>
+                        <h3>Track Progress</h3>
+                        <p>Real-time stats, completion tracking, and smart filtering. See how productive you are at a glance.</p>
+                        <div class="slide-mock"><div class="mock-progress"><div class="mock-bar" style="width:72%"></div></div><span class="mock-pct">72%</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-dots">
+                <button class="dot active" data-slide="0"></button>
+                <button class="dot" data-slide="1"></button>
+                <button class="dot" data-slide="2"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features 3x3 -->
+    <section class="landing-section" id="features-section">
+        <h2 class="section-title">What Makes Us <span class="gradient-text">Different</span></h2>
+        <p class="section-subtitle">Packed with features to supercharge your productivity</p>
+        <div class="features-grid">
+            <div class="feature-box"><div class="feature-icon" style="--fc:#6C63FF">🤖</div><h4>AI Todo Creation</h4><p>Create tasks using natural language via the built-in AI chatbot</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#3B82F6">📅</div><h4>Smart Date Parsing</h4><p>Say "by tomorrow" or "Jan 15" — dates are parsed automatically</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#10B981">🔄</div><h4>Real-time Sync</h4><p>Your tasks sync with the cloud instantly across sessions</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#F59E0B">⚡</div><h4>Priority System</h4><p>High, Medium, Low — organize and focus on what matters most</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#EF4444">🔍</div><h4>Search & Filter</h4><p>Find any task instantly with real-time search and smart filters</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#8B5CF6">🌙</div><h4>Dark Mode</h4><p>Beautiful dark theme for comfortable viewing day and night</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#EC4899">✋</div><h4>Drag & Drop</h4><p>Reorder your tasks with intuitive drag-and-drop interactions</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#14B8A6">📋</div><h4>Subtasks</h4><p>Break tasks into smaller steps and track completion progress</p></div>
+            <div class="feature-box"><div class="feature-icon" style="--fc:#F97316">🔒</div><h4>Secure Auth</h4><p>JWT-based authentication keeps your data safe and private</p></div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Section -->
+    <section class="landing-section ai-section">
+        <h2 class="section-title">Powered by <span class="gradient-text">AI</span></h2>
+        <p class="section-subtitle">Your intelligent assistant for effortless task management</p>
+        <div class="ai-cards">
+            <div class="ai-card">
+                <div class="ai-card-icon">🧠</div>
+                <h4>AI Assistant</h4>
+                <p>Rising Star AI chatbot understands natural language to create, manage, and organize your todos seamlessly.</p>
+            </div>
+            <div class="ai-card ai-card--model">
+                <div class="ai-card-icon">⚙️</div>
+                <h4>Model</h4>
+                <div class="model-name">Meta Llama 3.3 70B Instruct</div>
+                <p>Powered via <strong>OpenRouter API</strong> — a state-of-the-art open-source LLM for intelligent responses.</p>
+            </div>
+            <div class="ai-card">
+                <div class="ai-card-icon">💡</div>
+                <h4>Smart Parsing</h4>
+                <p>Extracts task titles, due dates, and context from plain text — no forms needed, just type naturally.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack 3x2 -->
+    <section class="landing-section">
+        <h2 class="section-title">Built With <span class="gradient-text">Modern Tech</span></h2>
+        <p class="section-subtitle">Enterprise-grade stack, developer-friendly architecture</p>
+        <div class="tech-grid">
+            <div class="tech-box"><div class="tech-logo">⚡</div><h4>FastAPI</h4><p>High-performance Python backend</p></div>
+            <div class="tech-box"><div class="tech-logo">🐘</div><h4>PostgreSQL</h4><p>Reliable cloud database (Neon)</p></div>
+            <div class="tech-box"><div class="tech-logo">🔗</div><h4>SQLAlchemy</h4><p>Powerful Python ORM layer</p></div>
+            <div class="tech-box"><div class="tech-logo">🟨</div><h4>JavaScript</h4><p>Vanilla JS, zero-dependency frontend</p></div>
+            <div class="tech-box"><div class="tech-logo">🤖</div><h4>OpenRouter AI</h4><p>LLM gateway for AI features</p></div>
+            <div class="tech-box"><div class="tech-logo">🚀</div><h4>Vercel / Render</h4><p>Serverless & container deployment</p></div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="landing-footer-cta">
+        <h2>Ready to Get Things Done?</h2>
+        <p>Join Rising Star Todo and transform how you manage tasks.</p>
+        <button id="footer-get-started" class="btn btn-primary btn-lg hero-cta">
+            <span>Get Started Now</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+    </section>
+</div>
+
+<!-- ==================== AUTH MODAL ==================== -->
+<div id="auth-modal" class="modal-overlay hidden">
+    <div class="auth-modal-card glass-card" role="dialog">
+        <button id="auth-modal-close" class="icon-btn auth-modal-close" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+
+        <!-- Login -->
+        <div id="login-screen" class="auth-screen">
+            <div class="auth-header">
+                <div class="auth-logo"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="14" fill="url(#logoGrad)"/><path d="M14 24L21 31L34 18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="logoGrad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs></svg></div>
+                <h1>Welcome Back - Rising Star To Do</h1>
+                <p class="auth-subtitle">Sign in to continue to Rising Star Todo - To Do gives you focus, from work to play.</p>
+            </div>
+            <form id="login-form" class="auth-form" autocomplete="off">
+                <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><input type="text" id="login-username" placeholder="Username" required><label>Username</label></div>
+                <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><input type="password" id="login-password" placeholder="Password" required><label>Password</label></div>
+                <div id="login-error" class="auth-error hidden"></div>
+                <button type="submit" id="login-btn" class="btn btn-primary btn-full"><span class="btn-text">Sign In</span><div class="btn-loader hidden"><div class="spinner"></div></div></button>
+            </form>
+            <div class="auth-footer"><p>Don't have an account? <a href="#" id="show-signup">Create one</a></p></div>
+        </div>
+
+        <!-- Signup -->
+        <div id="signup-screen" class="auth-screen hidden">
+            <div class="auth-header">
+                <div class="auth-logo"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="14" fill="url(#logoGrad2)"/><path d="M24 14v20M14 24h20" stroke="white" stroke-width="3.5" stroke-linecap="round"/><defs><linearGradient id="logoGrad2" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6C63FF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs></svg></div>
+                <h1>Create Account</h1>
+                <p class="auth-subtitle">Get started with Rising Star Todo</p>
+            </div>
+            <form id="signup-form" class="auth-form" autocomplete="off">
+                <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><input type="text" id="signup-username" placeholder="Username" required><label>Username</label></div>
+                <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><input type="email" id="signup-email" placeholder="Email" required><label>Email</label></div>
+                <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><input type="password" id="signup-password" placeholder="Password" required minlength="6"><label>Password</label></div>
+                <div id="signup-error" class="auth-error hidden"></div>
+                <div id="signup-success" class="auth-success hidden"></div>
+                <button type="submit" id="signup-btn" class="btn btn-primary btn-full"><span class="btn-text">Create Account</span><div class="btn-loader hidden"><div class="spinner"></div></div></button>
+            </form>
+            <div class="auth-footer"><p>Already have an account? <a href="#" id="show-login">Sign in</a></p></div>
         </div>
     </div>
 </div>
@@ -307,6 +384,42 @@
             </div>
         </div>
     </main>
+
+    <!-- ==================== CHATBOT WIDGET (only visible after login) ==================== -->
+    <button id="chatbot-fab" class="chatbot-fab" aria-label="Open chatbot" title="AI Assistant">
+        <svg class="fab-icon-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <svg class="fab-icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <span class="fab-pulse"></span>
+    </button>
+
+    <div id="chatbot-modal" class="chatbot-modal hidden">
+        <div class="chatbot-header">
+            <div class="chatbot-header-info">
+                <div class="chatbot-avatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/><circle cx="12" cy="17" r="1"/></svg>
+                </div>
+                <div>
+                    <div class="chatbot-name">Rising Star AI</div>
+                    <div class="chatbot-status"><span class="status-dot"></span> Online</div>
+                </div>
+            </div>
+            <button id="chatbot-clear-btn" class="icon-btn icon-btn-sm" title="Clear chat" aria-label="Clear chat">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+        </div>
+        <div id="chatbot-messages" class="chatbot-messages">
+            <div class="chat-bubble bot">
+                <div class="bubble-content">👋 Hi! I'm your AI assistant. I can help you create todos!<br><br>💡 Try saying:<br>• <b>"Add task: Buy groceries by 2026-05-01"</b><br>• <b>"Create todo: Meeting with team"</b><br>• <b>"Remind me to submit report by tomorrow"</b><br><br>Or just ask me anything!</div>
+                <div class="bubble-time">Just now</div>
+            </div>
+        </div>
+        <form id="chatbot-form" class="chatbot-input-area">
+            <input type="text" id="chatbot-input" placeholder="Create a todo or ask anything..." autocomplete="off" aria-label="Chat message">
+            <button type="submit" id="chatbot-send-btn" class="chatbot-send-btn" aria-label="Send message">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+        </form>
+    </div>
 </div>
 
 <!-- ==================== TASK MODAL ==================== -->
@@ -375,46 +488,12 @@
     </div>
 </div>
 
-<!-- ==================== CHATBOT WIDGET ==================== -->
-<button id="chatbot-fab" class="chatbot-fab" aria-label="Open chatbot" title="AI Assistant">
-    <svg class="fab-icon-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <svg class="fab-icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    <span class="fab-pulse"></span>
-</button>
 
-<div id="chatbot-modal" class="chatbot-modal hidden">
-    <div class="chatbot-header">
-        <div class="chatbot-header-info">
-            <div class="chatbot-avatar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/><circle cx="12" cy="17" r="1"/></svg>
-            </div>
-            <div>
-                <div class="chatbot-name">Rising Star AI</div>
-                <div class="chatbot-status"><span class="status-dot"></span> Online</div>
-            </div>
-        </div>
-        <button id="chatbot-clear-btn" class="icon-btn icon-btn-sm" title="Clear chat" aria-label="Clear chat">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        </button>
-    </div>
-    <div id="chatbot-messages" class="chatbot-messages">
-        <div class="chat-bubble bot">
-            <div class="bubble-content">👋 Hi! I'm your AI assistant. Ask me anything!</div>
-            <div class="bubble-time">Just now</div>
-        </div>
-    </div>
-    <form id="chatbot-form" class="chatbot-input-area">
-        <input type="text" id="chatbot-input" placeholder="Type a message..." autocomplete="off" aria-label="Chat message">
-        <button type="submit" id="chatbot-send-btn" class="chatbot-send-btn" aria-label="Send message">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-    </form>
-</div>
 
 <!-- ==================== TOAST ==================== -->
 <div id="toast-container" class="toast-container"></div>
 
-<script src="/todo/static/app.js?v=2"></script>
+<script src="/todo/static/app.js?v=4"></script>
 </body>
 </html>
 

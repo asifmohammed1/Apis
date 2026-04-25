@@ -31,8 +31,10 @@
     const $$ = (sel) => document.querySelectorAll(sel);
 
     const DOM = {
-        // Auth
-        authContainer: $('#auth-container'),
+        // Landing + Auth Modal
+        landingPage: $('#landing-page'),
+        authModal: $('#auth-modal'),
+        authModalClose: $('#auth-modal-close'),
         loginScreen: $('#login-screen'),
         signupScreen: $('#signup-screen'),
         loginForm: $('#login-form'),
@@ -232,16 +234,32 @@
     // ======================================
 
     function showAuth() {
-        DOM.authContainer.classList.remove('hidden');
+        DOM.landingPage.classList.remove('hidden');
         DOM.appContainer.classList.add('hidden');
+        DOM.authModal.classList.add('hidden');
+        initCarousel();
     }
 
     function showApp() {
-        DOM.authContainer.classList.add('hidden');
+        DOM.landingPage.classList.add('hidden');
+        DOM.authModal.classList.add('hidden');
         DOM.appContainer.classList.remove('hidden');
         updateUserDisplay();
         loadTodosFromAPI();
         renderAll();
+    }
+
+    function openAuthModal() {
+        DOM.authModal.classList.remove('hidden');
+        DOM.loginScreen.classList.remove('hidden');
+        DOM.signupScreen.classList.add('hidden');
+        DOM.loginError.classList.add('hidden');
+        DOM.signupError.classList.add('hidden');
+        DOM.signupSuccess.classList.add('hidden');
+    }
+
+    function closeAuthModal() {
+        DOM.authModal.classList.add('hidden');
     }
 
     function updateUserDisplay() {
@@ -399,7 +417,6 @@
         DOM.loginScreen.classList.add('hidden');
         DOM.signupScreen.classList.remove('hidden');
         DOM.signupScreen.style.animation = 'slideUpFade 0.4s ease-out';
-        // Clear errors
         DOM.signupError.classList.add('hidden');
         DOM.signupSuccess.classList.add('hidden');
     }
@@ -408,8 +425,33 @@
         DOM.signupScreen.classList.add('hidden');
         DOM.loginScreen.classList.remove('hidden');
         DOM.loginScreen.style.animation = 'slideUpFade 0.4s ease-out';
-        // Clear errors
         DOM.loginError.classList.add('hidden');
+    }
+
+    // ======================================
+    // CAROUSEL
+    // ======================================
+
+    let carouselInterval = null;
+
+    function initCarousel() {
+        const track = document.getElementById('carousel-track');
+        const dots = document.querySelectorAll('.carousel-dots .dot');
+        if (!track || dots.length === 0) return;
+
+        let current = 0;
+        const total = dots.length;
+
+        function goToSlide(idx) {
+            current = idx;
+            track.style.transform = `translateX(-${current * 100}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === current));
+        }
+
+        dots.forEach(d => d.addEventListener('click', () => goToSlide(parseInt(d.dataset.slide))));
+
+        if (carouselInterval) clearInterval(carouselInterval);
+        carouselInterval = setInterval(() => goToSlide((current + 1) % total), 4000);
     }
 
     // ======================================
@@ -934,6 +976,16 @@
         DOM.showSignup.addEventListener('click', (e) => { e.preventDefault(); switchToSignup(); });
         DOM.showLogin.addEventListener('click', (e) => { e.preventDefault(); switchToLogin(); });
 
+        // Auth Modal
+        DOM.authModalClose.addEventListener('click', closeAuthModal);
+        DOM.authModal.addEventListener('click', (e) => { if (e.target === DOM.authModal) closeAuthModal(); });
+
+        // Get Started buttons
+        ['#hero-get-started', '#landing-get-started-nav', '#footer-get-started'].forEach(sel => {
+            const btn = $(sel);
+            if (btn) btn.addEventListener('click', openAuthModal);
+        });
+
         // Sidebar
         DOM.menuToggleBtn.addEventListener('click', openSidebar);
         DOM.sidebarCloseBtn.addEventListener('click', closeSidebar);
@@ -982,6 +1034,7 @@
             if (e.key === 'Escape') {
                 closeModal();
                 closeSidebar();
+                closeAuthModal();
             }
             if (e.key === 'n' && !e.ctrlKey && !e.metaKey && !isInputFocused()) {
                 e.preventDefault();
@@ -1035,11 +1088,11 @@
         return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     }
 
-    function addChatBubble(text, type) {
+    function addChatBubble(content, type, isHtml = false) {
         const bubble = document.createElement('div');
         bubble.className = `chat-bubble ${type}`;
         bubble.innerHTML = `
-            <div class="bubble-content">${escapeHtml(text)}</div>
+            <div class="bubble-content">${isHtml ? content : escapeHtml(content)}</div>
             <div class="bubble-time">${getTimeStr()}</div>
         `;
         chatbotDOM.messages.appendChild(bubble);
@@ -1067,6 +1120,110 @@
         if (el) el.remove();
     }
 
+    // ---- Todo Creation via Chat ----
+
+    // Patterns that indicate the user wants to create a todo
+    const TODO_PATTERNS = [
+        /^(?:add\s+(?:a\s+)?task|create\s+(?:a\s+)?(?:todo|task)|new\s+(?:todo|task)|remind\s+me\s+to|todo|make\s+(?:a\s+)?(?:todo|task)|set\s+(?:a\s+)?(?:reminder|task))[\s:]*(.+)/i,
+        /^(?:i\s+need\s+to|i\s+have\s+to|i\s+should|don'?t\s+forget\s+to|remember\s+to)[\s:]*(.+)/i
+    ];
+
+    // Date patterns to extract from the task text
+    const DATE_PATTERNS = [
+        // YYYY-MM-DD
+        { regex: /\b(?:by|on|due|before|until|at)\s+(\d{4}-\d{2}-\d{2})\b/i, extract: (m) => m[1] },
+        // "by tomorrow"
+        { regex: /\b(?:by|on|due|before)\s+tomorrow\b/i, extract: () => {
+            const d = new Date(); d.setDate(d.getDate() + 1);
+            return d.toISOString().split('T')[0];
+        }},
+        // "by today"
+        { regex: /\b(?:by|on|due|before)\s+today\b/i, extract: () => {
+            return new Date().toISOString().split('T')[0];
+        }},
+        // "by next week" (7 days)
+        { regex: /\b(?:by|on|before)\s+next\s+week\b/i, extract: () => {
+            const d = new Date(); d.setDate(d.getDate() + 7);
+            return d.toISOString().split('T')[0];
+        }},
+        // "by DD/MM/YYYY" or "by MM/DD/YYYY"
+        { regex: /\b(?:by|on|due|before)\s+(\d{1,2})\/(\d{1,2})\/(\d{4})\b/i, extract: (m) => {
+            return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+        }},
+        // "by Jan 15" or "by January 15"
+        { regex: /\b(?:by|on|due|before)\s+(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?\b/i, extract: (m) => {
+            const months = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+            const key = m[1].slice(0,3).toLowerCase();
+            const month = months[key];
+            const year = new Date().getFullYear();
+            return `${year}-${String(month).padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+        }},
+        // standalone YYYY-MM-DD anywhere in the text
+        { regex: /(\d{4}-\d{2}-\d{2})/, extract: (m) => m[1] }
+    ];
+
+    function parseTodoFromMessage(message) {
+        let taskText = null;
+
+        for (const pattern of TODO_PATTERNS) {
+            const match = message.match(pattern);
+            if (match) {
+                taskText = match[1].trim();
+                break;
+            }
+        }
+
+        if (!taskText) return null;
+
+        // Extract date if present
+        let dueDate = '';
+        for (const dp of DATE_PATTERNS) {
+            const dateMatch = taskText.match(dp.regex);
+            if (dateMatch) {
+                dueDate = dp.extract(dateMatch);
+                // Remove the date portion from the task title
+                taskText = taskText.replace(dp.regex, '').trim();
+                break;
+            }
+        }
+
+        // Clean up the task text
+        taskText = taskText.replace(/^[\s:,\-]+|[\s:,\-]+$/g, '').trim();
+
+        if (!taskText) return null;
+
+        // Capitalize first letter
+        taskText = taskText.charAt(0).toUpperCase() + taskText.slice(1);
+
+        return { title: taskText, dueDate };
+    }
+
+    function buildTodoCardHtml(title, dueDate) {
+        const dateDisplay = dueDate
+            ? `<div class="chat-todo-date">📅 Due: ${formatDate(dueDate) || dueDate}</div>`
+            : '';
+        return `
+            ✅ <b>Todo created!</b>
+            <div class="chat-todo-card">
+                <div class="chat-todo-title">${escapeHtml(title)}</div>
+                ${dateDisplay}
+            </div>
+            Your task has been added to your list.
+        `;
+    }
+
+    async function handleChatTodoCreate(parsed) {
+        const taskData = createTaskObject(
+            parsed.title,
+            '',
+            'medium',
+            parsed.dueDate,
+            []
+        );
+        await addTask(taskData);
+        return buildTodoCardHtml(parsed.title, parsed.dueDate);
+    }
+
     async function sendChatMessage(message) {
         if (!message.trim() || chatSending) return;
 
@@ -1077,33 +1234,49 @@
         addChatBubble(message, 'user');
         chatbotDOM.input.value = '';
 
-        // Show typing
-        showTypingIndicator();
+        // Check if it's a todo-creation request
+        const todoData = parseTodoFromMessage(message);
 
-        try {
-            const res = await fetch(`${API_BASE}/v1/OpenRouter`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ BOT: message })
-            });
-
+        if (todoData) {
+            // Show typing briefly
+            showTypingIndicator();
+            await new Promise(r => setTimeout(r, 600));
             removeTypingIndicator();
 
-            if (!res.ok) {
-                throw new Error('Failed to get response');
+            try {
+                const cardHtml = await handleChatTodoCreate(todoData);
+                addChatBubble(cardHtml, 'bot', true);
+            } catch (err) {
+                addChatBubble('⚠️ Sorry, I couldn\'t create that todo. Please try again.', 'bot');
             }
+        } else {
+            // Regular AI chat — send to OpenRouter
+            showTypingIndicator();
+            try {
+                const res = await fetch(`${API_BASE}/v1/OpenRouter`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ BOT: message })
+                });
 
-            const data = await res.json();
-            const reply = data.Responses || 'Sorry, I could not process that.';
-            addChatBubble(reply, 'bot');
-        } catch (err) {
-            removeTypingIndicator();
-            addChatBubble('⚠️ Sorry, I\'m having trouble connecting. Please try again.', 'bot');
-        } finally {
-            chatSending = false;
-            chatbotDOM.sendBtn.disabled = false;
-            chatbotDOM.input.focus();
+                removeTypingIndicator();
+
+                if (!res.ok) {
+                    throw new Error('Failed to get response');
+                }
+
+                const data = await res.json();
+                const reply = data.Responses || 'Sorry, I could not process that.';
+                addChatBubble(reply, 'bot');
+            } catch (err) {
+                removeTypingIndicator();
+                addChatBubble('⚠️ Sorry, I\'m having trouble connecting. Please try again.', 'bot');
+            }
         }
+
+        chatSending = false;
+        chatbotDOM.sendBtn.disabled = false;
+        chatbotDOM.input.focus();
     }
 
     function clearChat() {
@@ -1111,7 +1284,7 @@
         const welcome = document.createElement('div');
         welcome.className = 'chat-bubble bot';
         welcome.innerHTML = `
-            <div class="bubble-content">👋 Hi! I'm your AI assistant. Ask me anything!</div>
+            <div class="bubble-content">👋 Hi! I'm your AI assistant. I can help you create todos!<br><br>💡 Try saying:<br>• <b>"Add task: Buy groceries by 2026-05-01"</b><br>• <b>"Create todo: Meeting with team"</b><br>• <b>"Remind me to submit report by tomorrow"</b><br><br>Or just ask me anything!</div>
             <div class="bubble-time">Just now</div>
         `;
         chatbotDOM.messages.appendChild(welcome);
