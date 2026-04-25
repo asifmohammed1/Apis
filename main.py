@@ -5,10 +5,13 @@ import psycopg2
 from pydantic import BaseModel
 from fastapi import FastAPI, Query, APIRouter
 import urllib.parse
-from selenium.webdriver.common.by import By
+try:
+    from selenium.webdriver.common.by import By
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+except ImportError:
+    pass
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import requests
 import json
 from todo import *
@@ -83,7 +86,7 @@ def create_data(test_table: CreateData):
         res = {
             "message": "data created successfully",
             "status":201,
-            "data":dict(test_table)
+            "data":test_table.model_dump()
                 }
     except:
         res = {
@@ -201,7 +204,7 @@ def create_logs(test_table: CreateLogs):
     res = {
         "message": "data created successfully",
         "status":201,
-        "data":dict(test_table)
+        "data":test_table.model_dump()
             }
     # except:
     #     res = {
@@ -280,60 +283,56 @@ def gptrun(message):
     res = response.json()['choices'][0]['message']['content']
     return res
 
+IS_VERCEL = os.environ.get("VERCEL", "") == "1"
 
+if not IS_VERCEL:
+    from telebot.async_telebot import AsyncTeleBot
+    import asyncio
 
-from telebot.async_telebot import AsyncTeleBot
-import asyncio
+    bot = AsyncTeleBot('8045583602:AAHI_Kc6RYleCjLZjtjLckbcuy6QvSAfKBQ')
 
-bot = AsyncTeleBot('8045583602:AAHI_Kc6RYleCjLZjtjLckbcuy6QvSAfKBQ')
+    bot_task = None
 
-bot_task = None
-
-@bot.message_handler(commands=['help', 'start'])
-async def send_welcome(message):
-    await bot.reply_to(message, """\
+    @bot.message_handler(commands=['help', 'start'])
+    async def send_welcome(message):
+        await bot.reply_to(message, """\
 Hi there, I am Rising Star Bot.
 I am excited to have a conversation with you! What can I do for you!\
 """)
 
-@bot.message_handler(func=lambda message: True)
-async def echo_message(message):
-    try:
-        output = gptrun(message.text)
-    except:
-        output = "Due to high traffic, the bot is under maintenance. Please try again later."
-    await bot.reply_to(message, output)
+    @bot.message_handler(func=lambda message: True)
+    async def echo_message(message):
+        try:
+            output = gptrun(message.text)
+        except:
+            output = "Due to high traffic, the bot is under maintenance. Please try again later."
+        await bot.reply_to(message, output)
 
-async def run_bot():
-    await bot.polling()
+    async def run_bot():
+        await bot.polling()
 
-@app.on_event("startup")
-async def startup_event():
-    global bot_task
-    bot_task = asyncio.create_task(run_bot())
+    @app.on_event("startup")
+    async def startup_event():
+        global bot_task
+        bot_task = asyncio.create_task(run_bot())
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    bot_task.cancel()
-    await bot.close_session()
+    @app.on_event("shutdown")
+    async def shutdown_event():
+        bot_task.cancel()
+        await bot.close_session()
 
 @app.get("/")
 async def root():
     return {"message": "Bot is running"}
 
-import gradio as gr
+if not IS_VERCEL:
+    import gradio as gr
 
-def chatbot(message, history):
-    history = history or []
-    res = gptrun(message)
-    history.append((message, res))
-    return history, history
+    def chatbot_fn(message, history):
+        res = gptrun(message)
+        return res
 
-with gr.Blocks() as gradio_app:
-    gr.Markdown("## 💬 Rising Star Chatbot")
-    chatbot_ui = gr.Chatbot()
-    msg = gr.Textbox(placeholder="Type a message...", show_label=False)
-    state = gr.State([])
-    msg.submit(chatbot, inputs=[msg, state], outputs=[chatbot_ui, state])
+    gradio_app = gr.ChatInterface(fn=chatbot_fn, title="💬 Rising Star Chatbot")
 
-app = gr.mount_gradio_app(app, gradio_app, path="/chat")
+    app = gr.mount_gradio_app(app, gradio_app, path="/chat")
+
